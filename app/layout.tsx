@@ -32,3 +32,15 @@ export default function RootLayout({
     </html>
   );
 }
+
+<div
+  style={{
+    position: "fixed",
+    inset: 0,
+    pointerEvents: "none",
+    background: `
+      radial-gradient(circle at 50% 0%, rgba(128,155,166,0.05), transparent 60%)
+    `,
+    zIndex: 0
+  }}
+/>

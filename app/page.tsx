@@ -9,8 +9,6 @@ export default function Home() {
       <Navbar />
       <div className="container py-4">
         <Hero />
-        <Categories />
-        <Featured />
       </div>
     </>
   );
