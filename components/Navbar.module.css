@@ -1,0 +1,159 @@
+.shell {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 18px 20px 0;
+}
+
+.nav {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(29, 37, 38, 0.92), rgba(15, 15, 16, 0.82)),
+    rgba(15, 15, 16, 0.72);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brandMark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #f6f2eb;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), transparent 55%),
+    linear-gradient(135deg, #809ba6, #8c613b);
+  box-shadow: 0 12px 22px rgba(128, 155, 166, 0.22);
+}
+
+.brandName {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brandTag {
+  display: block;
+  color: #9fb0b7;
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
+.aura {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 140px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.auraDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f2eee8, #8c613b);
+  box-shadow:
+    0 0 0 6px rgba(242, 238, 232, 0.06),
+    0 0 24px rgba(242, 238, 232, 0.22);
+}
+
+.auraLine {
+  width: 96px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(242, 238, 232, 0.5), rgba(128, 155, 166, 0));
+}
+
+@media (max-width: 900px) {
+  .nav {
+    gap: 14px;
+    padding: 12px 16px;
+  }
+
+  .brand {
+    flex: 1;
+  }
+
+  .aura {
+    min-width: 110px;
+    gap: 10px;
+  }
+
+  .auraLine {
+    width: 72px;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding: 12px 12px 0;
+  }
+
+  .nav {
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 18px;
+  }
+
+  .brandMark {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    font-size: 0.88rem;
+  }
+
+  .brandName {
+    font-size: 1rem;
+  }
+
+  .brandTag {
+    display: none;
+  }
+
+  .aura {
+    min-width: auto;
+    gap: 8px;
+  }
+
+  .auraDot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .auraLine {
+    width: 44px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nav {
+    padding: 10px 12px;
+  }
+
+  .auraLine {
+    width: 30px;
+  }
+}

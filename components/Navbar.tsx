@@ -1,17 +1,24 @@
+import styles from "./Navbar.module.css";
+
 export default function Navbar() {
   return (
-    <nav
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        backdropFilter: "blur(12px)",
-        background: "rgba(15, 15, 16, 0.6)",
-        borderBottom: "1px solid rgba(255,255,255,0.08)"
-      }}
-      className="px-4 py-3"
-    >
-      <strong>QFind</strong>
-    </nav>
+    <header className={styles.shell}>
+      <nav className={styles.nav}>
+        <div className={styles.brand}>
+          <span className={styles.brandMark} aria-hidden="true">
+            QF
+          </span>
+          <span>
+            <span className={styles.brandName}>QFind</span>
+            <span className={styles.brandTag}>Servicios cerca de ti</span>
+          </span>
+        </div>
+
+        <div className={styles.aura} aria-hidden="true">
+          <span className={styles.auraDot} />
+          <span className={styles.auraLine} />
+        </div>
+      </nav>
+    </header>
   );
 }

@@ -7,6 +7,7 @@ import {
   getCitiesByCategoryAndSubcategory,
   getSubcategoriesByCategory,
 } from "@/lib/services/catalog";
+import styles from "./ServiceFinder.module.css";
 
 export default function ServiceFinder() {
   const router = useRouter();
@@ -51,65 +52,57 @@ export default function ServiceFinder() {
   };
 
   return (
-    <div
-      className="d-flex flex-column gap-3 align-items-center"
-      style={{ width: "100%", maxWidth: "460px", margin: "0 auto" }}
-    >
-      <select
-        className="form-select"
-        value={categoryId}
-        onChange={(e) => handleCategoryChange(e.target.value)}
-        style={selectStyle}
-      >
-        <option value="">Select a category</option>
-        {categories.map((category) => (
-          <option key={category.id} value={category.id}>
-            {category.name}
-          </option>
-        ))}
-      </select>
-
-      {categoryId && (
+    <div className={styles.root}>
+      <div className={styles.slot}>
         <select
-          className="form-select"
+          className={`form-select ${styles.select}`}
+          value={categoryId}
+          onChange={(e) => handleCategoryChange(e.target.value)}
+        >
+          <option value="">Selecciona una categoria</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className={styles.slot}>
+        <select
+          className={`form-select ${styles.select} ${
+            !categoryId ? styles.hidden : ""
+          }`}
           value={subcategoryId}
           onChange={(e) => handleSubcategoryChange(e.target.value)}
-          style={selectStyle}
+          disabled={!categoryId}
         >
-          <option value="">Select a subcategory</option>
+          <option value="">Selecciona una subcategoria</option>
           {subcategories.map((subcategory) => (
             <option key={subcategory.id} value={subcategory.id}>
               {subcategory.name}
             </option>
           ))}
         </select>
-      )}
+      </div>
 
-      {subcategoryId && (
+      <div className={styles.slot}>
         <select
-          className="form-select"
+          className={`form-select ${styles.select} ${
+            !subcategoryId ? styles.hidden : ""
+          }`}
           value={citySlug}
           onChange={(e) => handleCityChange(e.target.value)}
-          style={selectStyle}
+          disabled={!subcategoryId}
         >
-          <option value="">Select a city</option>
+          <option value="">Selecciona una ciudad</option>
           {cities.map((city) => (
             <option key={city.id} value={city.slug}>
               {city.name}
             </option>
           ))}
         </select>
-      )}
+      </div>
     </div>
   );
 }
-
-const selectStyle = {
-  padding: "14px",
-  borderRadius: "14px",
-  background: "#1D2526",
-  color: "#fff",
-  border: "none",
-  outline: "2px solid rgba(253, 251, 251, 0.84)",
-  outlineOffset: "4px",
-};
