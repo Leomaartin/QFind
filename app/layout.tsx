@@ -28,19 +28,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <div className="app-shell" />
+        <div className="app-content">{children}</div>
+      </body>
     </html>
   );
 }
-
-<div
-  style={{
-    position: "fixed",
-    inset: 0,
-    pointerEvents: "none",
-    background: `
-      radial-gradient(circle at 50% 0%, rgba(128,155,166,0.05), transparent 60%)
-    `,
-    zIndex: 0
-  }}
-/>

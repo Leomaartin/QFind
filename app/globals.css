@@ -1,4 +1,22 @@
+html {
+  scroll-padding-top: 112px;
+}
+
+.app-shell {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(128, 155, 166, 0.05), transparent 60%);
+}
+
+.app-content {
+  position: relative;
+  z-index: 1;
+}
+
 body {
+  position: relative;
   background: radial-gradient(
       circle at 20% 30%,
       rgba(128, 155, 166, 0.12),
@@ -10,12 +28,55 @@ body {
       transparent 40%
     ),
     linear-gradient(180deg, #0f0f10 0%, #1d2526 100%);
-
   color: #fff;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
 }
 
-/* inputs */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(128, 155, 166, 0.12),
+      rgba(128, 155, 166, 0.04) 24%,
+      transparent 52%
+    ),
+    radial-gradient(
+      circle at 50% 92%,
+      rgba(140, 97, 59, 0.08),
+      transparent 34%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.012) 0,
+      rgba(255, 255, 255, 0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  opacity: 0.8;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at center, transparent 54%, rgba(0, 0, 0, 0.2) 100%),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.12),
+      transparent 20%,
+      transparent 78%,
+      rgba(0, 0, 0, 0.18)
+    );
+}
+
 input {
   background-color: #1a1a1c !important;
   border: 1px solid #2a2a2d !important;
@@ -26,7 +87,6 @@ input::placeholder {
   color: #888;
 }
 
-/* cards */
 .card {
   background-color: #1a1a1c !important;
   border: 1px solid #2a2a2d !important;
@@ -34,12 +94,8 @@ input::placeholder {
   color: #fff;
 }
 
-/* navbar */
-.navbar {
-  background-color: #0f0f10 !important;
-}
-
-/* títulos */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #ffffff;
 }
