@@ -1,18 +1,12 @@
 import "./viewServices.css";
 export default function Banner() {
   return (
-    <section
-      className="banner-section mb-5 d-flex align-items-end"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')",
-      }}
-    >
+    <section className="banner-section mb-5 d-flex align-items-end">
       <div className="p-4">
-        <h1 className="banner-title">GLASSHAVEN</h1>
+        <h1 className="banner-title">All services. <br />One place.</h1>
 
         <p className="banner-sub">
-          A NEW STANDARD <br /> OF MODERN LIVING
+          Everything you need, <br />in one place
         </p>
       </div>
     </section>

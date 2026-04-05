@@ -6,6 +6,10 @@ type Service = {
   image: string;
 };
 
+type CardsProps = {
+  showTitle?: boolean;
+};
+
 const services: Service[] = [
   {
     name: "Restaurante X",
@@ -13,13 +17,13 @@ const services: Service[] = [
     image: "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1",
   },
   {
-    name: "Peluquería Y",
+    name: "Peluqueria Y",
     description: "Estilo profesional",
     image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e",
   },
   {
     name: "Plomero Z",
-    description: "Servicio rápido",
+    description: "Servicio rapido",
     image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952",
   },
   {
@@ -69,10 +73,10 @@ const services: Service[] = [
   },
 ];
 
-export default function ServicesCards() {
+export default function ServicesCards({ showTitle = false }: CardsProps) {
   return (
     <section className="services-section mb-5">
-      <h2 className="section-title mb-4">OUR SERVICES</h2>
+      {showTitle ? <h2 className="section-title mb-4">OUR SERVICES</h2> : null}
 
       <div className="row g-3">
         {services.map((srv, i) => (
