@@ -5,13 +5,19 @@ type FilterOption = {
   value: string;
 };
 
+type CityOption = FilterOption & {
+  placeId?: string;
+  source?: "google" | "fallback";
+};
+
 type FiltersProps = {
   categoryId: string;
   categoryOptions: FilterOption[];
-  cityOptions: FilterOption[];
-  citySlug: string;
+  cityLoading: boolean;
+  cityOptions: CityOption[];
+  cityQuery: string;
   onCategoryChange: (value: string) => void;
-  onCityChange: (value: string) => void;
+  onCityQueryChange: (value: string) => void;
   onSubcategoryChange: (value: string) => void;
   subcategoryId: string;
   subcategoryOptions: FilterOption[];
@@ -20,10 +26,11 @@ type FiltersProps = {
 export default function Filters({
   categoryId,
   categoryOptions,
+  cityLoading,
   cityOptions,
-  citySlug,
+  cityQuery,
   onCategoryChange,
-  onCityChange,
+  onCityQueryChange,
   onSubcategoryChange,
   subcategoryId,
   subcategoryOptions,
@@ -31,30 +38,40 @@ export default function Filters({
   return (
     <section className="filters-section">
       <div className="filters-container">
-        <div className="filter-group">
-          <label>Ciudad</label>
-          <select
-            className="filter-select"
-            value={citySlug}
-            onChange={(event) => onCityChange(event.target.value)}
-          >
-            <option value="">Selecciona una ciudad</option>
+        <div className="filter-group filter-group-city">
+          <label htmlFor="city-search">City</label>
+          <input
+            id="city-search"
+            className="filter-input"
+            list="city-suggestions"
+            placeholder="Search for a city"
+            type="text"
+            value={cityQuery}
+            onChange={(event) => onCityQueryChange(event.target.value)}
+          />
+          <datalist id="city-suggestions">
             {cityOptions.map((city) => (
-              <option key={city.value} value={city.value}>
-                {city.label}
-              </option>
+              <option
+                key={`${city.value}-${city.placeId ?? city.source ?? "local"}`}
+                value={city.label}
+              />
             ))}
-          </select>
+          </datalist>
+          <span className="filter-help">
+            {cityLoading
+              ? "Searching cities..."
+              : "City suggestions from Google Maps"}
+          </span>
         </div>
 
         <div className="filter-group">
-          <label>Categoria</label>
+          <label>Category</label>
           <select
             className="filter-select"
             value={categoryId}
             onChange={(event) => onCategoryChange(event.target.value)}
           >
-            <option value="">Selecciona una categoria</option>
+            <option value="">Select a category</option>
             {categoryOptions.map((category) => (
               <option key={category.value} value={category.value}>
                 {category.label}
@@ -64,14 +81,14 @@ export default function Filters({
         </div>
 
         <div className="filter-group">
-          <label>Subcategoria</label>
+          <label>Subcategory</label>
           <select
             className="filter-select"
             value={subcategoryId}
             onChange={(event) => onSubcategoryChange(event.target.value)}
             disabled={!categoryId}
           >
-            <option value="">Selecciona una subcategoria</option>
+            <option value="">Select a subcategory</option>
             {subcategoryOptions.map((subcategory) => (
               <option key={subcategory.value} value={subcategory.value}>
                 {subcategory.label}

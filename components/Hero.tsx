@@ -12,13 +12,13 @@ export default function Hero() {
 
           <div className={`container text-center ${styles.content}`}>
             <h1 className={`fw-bold mb-3 ${styles.title}`}>
-              Encuentra servicios
+              Find services
               <br />
-              en tu ciudad
+              in your city
             </h1>
 
             <p className={`mb-4 ${styles.subtitle}`}>
-              Todo en un solo lugar
+              Everything in one place
             </p>
 
             <div id="buscar" className={styles.finder}>

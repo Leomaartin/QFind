@@ -1,4 +1,4 @@
-type ResultadosPageProps = {
+type ResultsPageProps = {
   searchParams: Promise<{
     category?: string;
     subcategory?: string;
@@ -6,9 +6,9 @@ type ResultadosPageProps = {
   }>;
 };
 
-export default async function ResultadosPage({
+export default async function ResultsPage({
   searchParams,
-}: ResultadosPageProps) {
+}: ResultsPageProps) {
   const params = await searchParams;
 
   const category = params.category ?? "";
@@ -17,7 +17,7 @@ export default async function ResultadosPage({
 
   return (
     <main className="container py-5 text-white">
-      <h1 className="mb-4">Resultados</h1>
+      <h1 className="mb-4">Results</h1>
 
       <div
         className="card p-4"
@@ -28,13 +28,13 @@ export default async function ResultadosPage({
         }}
       >
         <p>
-          <strong>Categoría:</strong> {category}
+          <strong>Category:</strong> {category}
         </p>
         <p>
-          <strong>Subcategoría:</strong> {subcategory}
+          <strong>Subcategory:</strong> {subcategory}
         </p>
         <p>
-          <strong>Ciudad:</strong> {city}
+          <strong>City:</strong> {city}
         </p>
       </div>
     </main>

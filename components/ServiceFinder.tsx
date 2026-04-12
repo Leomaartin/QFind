@@ -59,7 +59,7 @@ export default function ServiceFinder() {
           value={categoryId}
           onChange={(e) => handleCategoryChange(e.target.value)}
         >
-          <option value="">Selecciona una categoria</option>
+          <option value="">Select a category</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -77,7 +77,7 @@ export default function ServiceFinder() {
           onChange={(e) => handleSubcategoryChange(e.target.value)}
           disabled={!categoryId}
         >
-          <option value="">Selecciona una subcategoria</option>
+          <option value="">Select a subcategory</option>
           {subcategories.map((subcategory) => (
             <option key={subcategory.id} value={subcategory.id}>
               {subcategory.name}
@@ -95,7 +95,7 @@ export default function ServiceFinder() {
           onChange={(e) => handleCityChange(e.target.value)}
           disabled={!subcategoryId}
         >
-          <option value="">Selecciona una ciudad</option>
+          <option value="">Select a city</option>
           {cities.map((city) => (
             <option key={city.id} value={city.slug}>
               {city.name}

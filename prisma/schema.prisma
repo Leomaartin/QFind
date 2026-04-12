@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BusinessStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+model City {
+  id               String            @id @default(cuid())
+  name             String
+  slug             String            @unique
+  province         String
+  country          String
+  businesses       Business[]
+  subcategoryLinks SubcategoryCity[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([name])
+}
+
+model Category {
+  id            String        @id @default(cuid())
+  name          String
+  slug          String        @unique
+  sortOrder     Int           @default(0)
+  subcategories Subcategory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([sortOrder])
+}
+
+model Subcategory {
+  id            String            @id @default(cuid())
+  categoryId    String
+  name          String
+  slug          String
+  sortOrder     Int               @default(0)
+  category      Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  businesses    Business[]
+  cityLinks     SubcategoryCity[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([categoryId, slug])
+  @@index([categoryId, sortOrder])
+}
+
+model SubcategoryCity {
+  subcategoryId String
+  cityId        String
+  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  city          City        @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@id([subcategoryId, cityId])
+  @@index([cityId])
+}
+
+model Business {
+  id              String         @id @default(cuid())
+  name            String
+  slug            String         @unique
+  subcategoryId   String
+  cityId          String
+  description     String?
+  addressLine1    String
+  neighborhood    String?
+  phone           String
+  whatsappNumber  String?
+  instagramHandle String?
+  websiteUrl      String?
+  coverImageUrl   String?
+  latitude        Decimal?       @db.Decimal(10, 7)
+  longitude       Decimal?       @db.Decimal(10, 7)
+  status          BusinessStatus @default(DRAFT)
+  isFeatured      Boolean        @default(false)
+  city            City           @relation(fields: [cityId], references: [id], onDelete: Restrict)
+  subcategory     Subcategory    @relation(fields: [subcategoryId], references: [id], onDelete: Restrict)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([cityId])
+  @@index([subcategoryId])
+  @@index([status, isFeatured])
+}

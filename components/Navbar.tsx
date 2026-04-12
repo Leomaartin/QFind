@@ -10,7 +10,7 @@ export default function Navbar() {
           </span>
           <span>
             <span className={styles.brandName}>QFind</span>
-            <span className={styles.brandTag}>Servicios cerca de ti</span>
+            <span className={styles.brandTag}>Services near you</span>
           </span>
         </div>
 
