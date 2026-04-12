@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import "./viewServices.css";
 import Banner from "@/components/Banner";
 import Cards from "@/components/Cards";
 import Filters from "@/components/Filters";
+
 import {
   filterServices,
   getServices,
@@ -28,7 +30,7 @@ type CitiesResponse = {
 
 function sortOptions<T extends FilterOption>(options: T[]) {
   return [...options].sort((left, right) =>
-    left.label.localeCompare(right.label)
+    left.label.localeCompare(right.label),
   );
 }
 
@@ -61,7 +63,7 @@ export default function ViewServiceContent() {
         label,
         value,
         source: "fallback" as const,
-      }))
+      })),
     );
   }, [categories]);
 
@@ -100,7 +102,7 @@ export default function ViewServiceContent() {
       try {
         const response = await fetch(
           `/api/maps/cities?input=${encodeURIComponent(cityQuery)}`,
-          { cache: "no-store" }
+          { cache: "no-store" },
         );
 
         if (!response.ok) {
@@ -111,15 +113,15 @@ export default function ViewServiceContent() {
         const suggestions = data.suggestions?.length
           ? sortOptions(data.suggestions)
           : localCityOptions.filter((city) =>
-              slugify(city.label).includes(slugify(cityQuery))
+              slugify(city.label).includes(slugify(cityQuery)),
             );
 
         setCityOptions(suggestions);
       } catch {
         setCityOptions(
           localCityOptions.filter((city) =>
-            slugify(city.label).includes(slugify(cityQuery))
-          )
+            slugify(city.label).includes(slugify(cityQuery)),
+          ),
         );
       } finally {
         setIsCitiesLoading(false);
@@ -137,14 +139,14 @@ export default function ViewServiceContent() {
         categories.map((category) => ({
           label: category.name,
           value: category.id,
-        }))
+        })),
       ),
-    [categories]
+    [categories],
   );
 
   const subcategoryOptions = useMemo(() => {
     const selectedCategory = categories.find(
-      (category) => category.id === categoryId
+      (category) => category.id === categoryId,
     );
 
     if (!selectedCategory) {
@@ -155,7 +157,7 @@ export default function ViewServiceContent() {
       selectedCategory.subcategories.map((subcategory) => ({
         label: subcategory.name,
         value: subcategory.id,
-      }))
+      })),
     );
   }, [categories, categoryId]);
 

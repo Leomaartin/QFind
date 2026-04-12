@@ -3,94 +3,104 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // change if needed
   url      = env("DATABASE_URL")
 }
 
-enum BusinessStatus {
-  DRAFT
-  ACTIVE
-  PAUSED
-  ARCHIVED
+model Country {
+  id        Int      @id @default(autoincrement())
+  name      String
+  label     String
+  archived  Boolean
+
+  states    State[]
+  services  Service[]
+}
+
+model State {
+  id        Int      @id @default(autoincrement())
+  name      String
+  label     String
+  active    Boolean
+
+  countryId Int
+  country   Country  @relation(fields: [countryId], references: [id])
+
+  cities    City[]
+  services  Service[]
 }
 
 model City {
-  id               String            @id @default(cuid())
-  name             String
-  slug             String            @unique
-  province         String
-  country          String
-  businesses       Business[]
-  subcategoryLinks SubcategoryCity[]
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  id       Int    @id @default(autoincrement())
+  name     String
+  label    String
 
-  @@index([name])
+  stateId  Int
+  state    State  @relation(fields: [stateId], references: [id])
+
+  services Service[]
 }
 
 model Category {
-  id            String        @id @default(cuid())
-  name          String
-  slug          String        @unique
-  sortOrder     Int           @default(0)
-  subcategories Subcategory[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id          Int      @id @default(autoincrement())
+  label       String
+  description String
+  active      Boolean
 
-  @@index([sortOrder])
+  subcategories Subcategory[]
+  services      Service[]
 }
 
 model Subcategory {
-  id            String            @id @default(cuid())
-  categoryId    String
-  name          String
-  slug          String
-  sortOrder     Int               @default(0)
-  category      Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  businesses    Business[]
-  cityLinks     SubcategoryCity[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String
+  label       String
+  description String
+  active      Boolean
 
-  @@unique([categoryId, slug])
-  @@index([categoryId, sortOrder])
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  services    Service[]
 }
 
-model SubcategoryCity {
-  subcategoryId String
-  cityId        String
-  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
-  city          City        @relation(fields: [cityId], references: [id], onDelete: Cascade)
-  createdAt     DateTime    @default(now())
+model Service {
+  id             Int     @id @default(autoincrement())
+  name           String
+  label          String
+  description    String
+  phone          String
+  instagram      String?
+  email          String?
+  image          String?
+  active         Boolean
+  validated      Boolean
+  paid           Boolean
 
-  @@id([subcategoryId, cityId])
-  @@index([cityId])
+  categoryId     Int
+  subcategoryId  Int
+  stateId        Int
+  countryId      Int
+  cityId         Int
+
+  category       Category    @relation(fields: [categoryId], references: [id])
+  subcategory    Subcategory @relation(fields: [subcategoryId], references: [id])
+  state          State       @relation(fields: [stateId], references: [id])
+  country        Country     @relation(fields: [countryId], references: [id])
+  city           City        @relation(fields: [cityId], references: [id])
+
+  plans          Plan[]
 }
 
-model Business {
-  id              String         @id @default(cuid())
-  name            String
-  slug            String         @unique
-  subcategoryId   String
-  cityId          String
-  description     String?
-  addressLine1    String
-  neighborhood    String?
-  phone           String
-  whatsappNumber  String?
-  instagramHandle String?
-  websiteUrl      String?
-  coverImageUrl   String?
-  latitude        Decimal?       @db.Decimal(10, 7)
-  longitude       Decimal?       @db.Decimal(10, 7)
-  status          BusinessStatus @default(DRAFT)
-  isFeatured      Boolean        @default(false)
-  city            City           @relation(fields: [cityId], references: [id], onDelete: Restrict)
-  subcategory     Subcategory    @relation(fields: [subcategoryId], references: [id], onDelete: Restrict)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+model Plan {
+  id          Int      @id @default(autoincrement())
+  name        String
+  label       String
+  duration    Int
+  startDate   DateTime
+  endDate     DateTime
+  paymentStatus Boolean
 
-  @@index([cityId])
-  @@index([subcategoryId])
-  @@index([status, isFeatured])
+  serviceId   Int
+  service     Service @relation(fields: [serviceId], references: [id])
 }
