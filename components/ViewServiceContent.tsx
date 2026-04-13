@@ -5,9 +5,11 @@ import "./viewServices.css";
 import Banner from "@/components/Banner";
 import Cards from "@/components/Cards";
 import Filters from "@/components/Filters";
+import AddServicePopup from "@/components/Popup";
 
 import {
   filterServices,
+
   getServices,
   type ServiceCardItem,
 } from "@/lib/services/businesses";
@@ -176,9 +178,56 @@ export default function ViewServiceContent() {
     setSubcategoryId("");
   };
 
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+
+  const stateOptions = useMemo(() => {
+    const states = new Set<string>();
+    allServices.forEach((s) => {
+   
+    });
+
+    return [
+      { label: "Buenos Aires", value: 1 },
+      { label: "Córdoba", value: 2 },
+      { label: "Santa Fe", value: 3 },
+    ];
+  }, [allServices]);
+
+  const countryOptions = useMemo(() => {
+    return [{ label: "Argentina", value: 1 }];
+  }, []);
+
+
+  const popupCityOptions = useMemo(() => {
+    return cityOptions.map((opt, index) => ({
+      label: opt.label,
+      value: index + 1, 
+    }));
+  }, [cityOptions]);
+
   return (
     <div className="container-service">
       <Banner />
+      <div className="add-service-trigger-container">
+        <button
+          className="add-service-trigger-btn"
+          onClick={() => setIsPopupOpen(true)}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Agregar Servicio
+        </button>
+      </div>
       <Filters
         categoryId={categoryId}
         categoryOptions={categoryOptions}
@@ -192,6 +241,16 @@ export default function ViewServiceContent() {
         subcategoryOptions={subcategoryOptions}
       />
       {isFullyFiltered ? <Cards services={filteredServices} showTitle /> : null}
+
+      {isPopupOpen && (
+        <AddServicePopup
+          onClose={() => setIsPopupOpen(false)}
+          categories={categories}
+          cityOptions={popupCityOptions}
+          stateOptions={stateOptions}
+          countryOptions={countryOptions}
+        />
+      )}
     </div>
   );
 }

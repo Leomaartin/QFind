@@ -77,17 +77,17 @@ model Service {
   validated      Boolean
   paid           Boolean
 
-  categoryId     Int
-  subcategoryId  Int
-  stateId        Int
-  countryId      Int
-  cityId         Int
+  categoryId     Int?
+  subcategoryId  Int?
+  stateId        Int?
+  countryId      Int?
+  cityId         Int?
 
-  category       Category    @relation(fields: [categoryId], references: [id])
-  subcategory    Subcategory @relation(fields: [subcategoryId], references: [id])
-  state          State       @relation(fields: [stateId], references: [id])
-  country        Country     @relation(fields: [countryId], references: [id])
-  city           City        @relation(fields: [cityId], references: [id])
+  category       Category?    @relation(fields: [categoryId], references: [id])
+  subcategory    Subcategory? @relation(fields: [subcategoryId], references: [id])
+  state          State?       @relation(fields: [stateId], references: [id])
+  country        Country?     @relation(fields: [countryId], references: [id])
+  city           City?        @relation(fields: [cityId], references: [id])
 
   plans          Plan[]
 }
