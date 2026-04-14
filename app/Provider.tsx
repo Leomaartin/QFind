@@ -1,15 +1,12 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    console.log("CLIENT ID:", process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
-  }, []);
-
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <Toaster position="top-right" reverseOrder={false} />
       {children}
     </GoogleOAuthProvider>
   );

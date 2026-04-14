@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         instagram: serviceData.instagram,
         email: serviceData.email,
         image: serviceData.image,
-        userId: user.id, // Vincular usando el ID encontrado
+        userId: user.id, 
 
         active: serviceData.active || false,
         validated: serviceData.validated || false,
@@ -82,30 +82,28 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userEmail, ...updateData } = body;
+    const { id, userEmail, ...updateData } = body;
 
-    if (!userEmail) {
+    let serviceId = id;
+
+    // Si no viene ID, intentamos resolver por email de usuario (como antes)
+    if (!serviceId && userEmail) {
+      const user = await prisma.user.findUnique({
+        where: { email: userEmail },
+        include: { service: true }
+      });
+      serviceId = user?.service?.id;
+    }
+
+    if (!serviceId) {
       return NextResponse.json(
-        { error: "El correo del usuario es necesario para actualizar el servicio" },
+        { error: "Se requiere un ID de servicio o correo de usuario válido para actualizar" },
         { status: 400 }
       );
     }
 
-    // Buscar al usuario
-    const user = await prisma.user.findUnique({
-      where: { email: userEmail },
-      include: { service: true }
-    });
-
-    if (!user || !user.service) {
-      return NextResponse.json(
-        { error: "No se encontró un servicio para este usuario" },
-        { status: 404 }
-      );
-    }
-
     const updatedService = await prisma.service.update({
-      where: { id: user.service.id },
+      where: { id: serviceId },
       data: {
         name: updateData.name,
         label: updateData.label,
@@ -114,7 +112,9 @@ export async function PUT(req: NextRequest) {
         instagram: updateData.instagram,
         email: updateData.email,
         image: updateData.image,
-        // No cambiamos active/paid aquí a menos que sea necesario
+        active: updateData.active, // Ahora permitimos editar activo
+        validated: updateData.validated,
+        paid: updateData.paid, // Ahora permitimos editar pagado
       },
     });
 
