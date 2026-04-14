@@ -90,6 +90,18 @@ model Service {
   city           City?        @relation(fields: [cityId], references: [id])
 
   plans          Plan[]
+
+  userId         Int     @unique
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+model User {
+  id        Int     @id @default(autoincrement())
+  google_id String  @unique
+  nombre    String
+  email     String  @unique
+  foto      String?
+
+  service   Service?
 }
 
 model Plan {
