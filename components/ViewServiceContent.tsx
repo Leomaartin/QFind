@@ -286,7 +286,7 @@ export default function ViewServiceContent() {
           stateOptions={stateOptions}
           countryOptions={countryOptions}
           user={currentUser}
-          initialData={userService} // Pasar los datos del servicio para editar
+          initialData={userService} 
         />
       )}
     </div>

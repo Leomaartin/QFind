@@ -33,12 +33,8 @@ interface AddServicePopupProps {
 
 export default function AddServicePopup({
   onClose,
-  categories,
-  cityOptions,
-  stateOptions,
-  countryOptions,
   user,
-  initialData, 
+  initialData,
 }: AddServicePopupProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -46,11 +42,55 @@ export default function AddServicePopup({
     description: "",
     phone: "",
     instagram: "",
-    image: "", // Base64 o URL
+    image: "",
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [category, setCategory] = useState<any[]>([]);
+  const [categoryId, setCategoryId] = useState<string>("");
+
+  const [subcategory, setSubcategory] = useState<any[]>([]);
+  const [subcategoryId, setSubcategoryId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchSubcategory = async () => {
+      if (!categoryId) return;
+
+      const res = await fetch("/api/filters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: categoryId }),
+      });
+
+      const subcategory = await res.json();
+      setSubcategory(subcategory);
+    };
+
+    fetchSubcategory();
+  }, [categoryId]);
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const res = await fetch("/api/filters");
+
+        if (!res.ok) throw new Error("Error al traer categorías");
+
+        const category = await res.json();
+        console.log(category);
+
+        setCategory(category);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategory();
+  }, []);
 
   // Pre-cargar datos si estamos en modo edición
   useEffect(() => {
@@ -81,7 +121,7 @@ export default function AddServicePopup({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // Límite de 2MB
+      if (file.size > 2 * 1024 * 1024) {
         alert("La imagen es demasiado grande. El límite es 2MB.");
         return;
       }
@@ -98,9 +138,11 @@ export default function AddServicePopup({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Obtener el email del usuario desde localStorage o props
-    const userEmail = user?.email || (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!).email : null);
+    const userEmail =
+      user?.email ||
+      (localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user")!).email
+        : null);
 
     if (!userEmail) {
       toast.error("No se pudo encontrar tu correo de sesión.");
@@ -109,6 +151,8 @@ export default function AddServicePopup({
 
     const dataToSend = {
       ...formData,
+      categoryId,
+      subcategoryId,
       email: userEmail,
       userEmail: userEmail,
       validated: false,
@@ -116,7 +160,9 @@ export default function AddServicePopup({
     };
 
     const method = initialData ? "PUT" : "POST";
-    const loadingToast = toast.loading(initialData ? "Actualizando servicio..." : "Creando servicio...");
+    const loadingToast = toast.loading(
+      initialData ? "Actualizando servicio..." : "Creando servicio...",
+    );
 
     try {
       const res = await fetch("/api/services", {
@@ -129,11 +175,19 @@ export default function AddServicePopup({
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || `Error al ${initialData ? "editar" : "crear"} servicio`);
+        throw new Error(
+          errorData.error ||
+            `Error al ${initialData ? "editar" : "crear"} servicio`,
+        );
       }
 
-      toast.success(initialData ? "¡Servicio actualizado!" : "¡Servicio creado exitosamente!", { id: loadingToast });
-      
+      toast.success(
+        initialData
+          ? "¡Servicio actualizado!"
+          : "¡Servicio creado exitosamente!",
+        { id: loadingToast },
+      );
+
       onClose();
       setTimeout(() => {
         window.location.reload();
@@ -148,7 +202,9 @@ export default function AddServicePopup({
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
         <div className="popup-header">
-          <h2>{initialData ? "Editar Mi Servicio" : "Agregar Nuevo Servicio"}</h2>
+          <h2>
+            {initialData ? "Editar Mi Servicio" : "Agregar Nuevo Servicio"}
+          </h2>
           <button className="close-btn" onClick={onClose}>
             &times;
           </button>
@@ -158,23 +214,50 @@ export default function AddServicePopup({
           <div className="form-grid">
             <div className="form-group">
               <label>Nombre del Negocio</label>
-              <input 
-                name="name" 
-                value={formData.name} 
-                onChange={handleChange} 
+              <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Ej: Restaurant El Paso"
-                required 
+                required
               />
             </div>
 
-            <div className="form-group">
-              <label>Categoría / Etiqueta</label>
-              <input 
-                name="label" 
-                value={formData.label} 
-                onChange={handleChange} 
-                placeholder="Ej: Gastronomía"
-              />
+            <div className="filter-group">
+              <label>Category</label>
+              <select
+                className="filter-select"
+                value={categoryId}
+                onChange={(event) => {
+                  setCategoryId(event.target.value);
+                }}
+              >
+                <option value="">Select a category</option>
+
+                {category.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Subcategory</label>
+              <select
+                className="filter-select"
+                value={subcategoryId}
+                onChange={(event) => setSubcategoryId(event.target.value)}
+                disabled={!categoryId}
+              >
+                <option value="">Select a subcategory</option>
+
+                {subcategory.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group full-width">
@@ -190,20 +273,20 @@ export default function AddServicePopup({
 
             <div className="form-group">
               <label>Teléfono</label>
-              <input 
-                name="phone" 
-                value={formData.phone} 
-                onChange={handleChange} 
+              <input
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
                 placeholder="Ej: +54 9 11..."
               />
             </div>
 
             <div className="form-group">
               <label>Instagram</label>
-              <input 
-                name="instagram" 
-                value={formData.instagram} 
-                onChange={handleChange} 
+              <input
+                name="instagram"
+                value={formData.instagram}
+                onChange={handleChange}
                 placeholder="@tu_negocio"
               />
             </div>
@@ -211,23 +294,41 @@ export default function AddServicePopup({
             <div className="form-group full-width">
               <label>Imagen del Servicio</label>
               <div className="image-upload-container">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  hidden 
-                  ref={fileInputRef} 
-                  onChange={handleFileChange} 
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
                 />
-                <div 
-                  className="image-preview-box" 
+                <div
+                  className="image-preview-box"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {imagePreview ? (
-                    <img src={imagePreview} alt="Preview" className="img-preview" />
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="img-preview"
+                    />
                   ) : (
                     <div className="upload-placeholder">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect
+                          x="3"
+                          y="3"
+                          width="18"
+                          height="18"
+                          rx="2"
+                          ry="2"
+                        ></rect>
                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
                         <polyline points="21 15 16 10 5 21"></polyline>
                       </svg>
@@ -236,12 +337,12 @@ export default function AddServicePopup({
                   )}
                 </div>
                 {imagePreview && (
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="remove-image-btn"
                     onClick={() => {
                       setImagePreview(null);
-                      setFormData(prev => ({ ...prev, image: "" }));
+                      setFormData((prev) => ({ ...prev, image: "" }));
                     }}
                   >
                     Eliminar Imagen

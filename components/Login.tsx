@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 
 
 interface GoogleUser {
-  id?: string | number; // Added optional id
+  id?: string | number; 
   name: string;
   email: string;
   picture: string;

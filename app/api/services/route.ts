@@ -8,12 +8,13 @@ export async function POST(req: NextRequest) {
 
     if (!userEmail) {
       return NextResponse.json(
-        { error: "El correo del usuario es necesario para vincular el servicio" },
-        { status: 400 }
+        {
+          error: "El correo del usuario es necesario para vincular el servicio",
+        },
+        { status: 400 },
       );
     }
 
-    // Buscar al usuario por email para obtener su ID
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
     });
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { error: "Usuario no encontrado en la base de datos" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -34,7 +35,9 @@ export async function POST(req: NextRequest) {
         instagram: serviceData.instagram,
         email: serviceData.email,
         image: serviceData.image,
-        userId: user.id, 
+        userId: user.id,
+        categoryId: Number(serviceData.categoryId),
+        subcategoryId: Number(serviceData.subcategoryId),
 
         active: serviceData.active || false,
         validated: serviceData.validated || false,
@@ -47,7 +50,7 @@ export async function POST(req: NextRequest) {
     console.error("Error creando servicio:", error);
     return NextResponse.json(
       { error: "Error al crear servicio" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -59,10 +62,9 @@ export async function GET(req: NextRequest) {
     const email = searchParams.get("email");
 
     if (email) {
-      // Intentamos buscar por el email del usuario vinculado
       const user = await prisma.user.findUnique({
         where: { email: email },
-        include: { service: true }
+        include: { service: true },
       });
       return NextResponse.json(user?.service || null);
     }
@@ -73,7 +75,7 @@ export async function GET(req: NextRequest) {
     console.error("Error obteniendo servicios:", error);
     return NextResponse.json(
       { error: "Error al obtener servicios" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -86,19 +88,21 @@ export async function PUT(req: NextRequest) {
 
     let serviceId = id;
 
-    // Si no viene ID, intentamos resolver por email de usuario (como antes)
     if (!serviceId && userEmail) {
       const user = await prisma.user.findUnique({
         where: { email: userEmail },
-        include: { service: true }
+        include: { service: true },
       });
       serviceId = user?.service?.id;
     }
 
     if (!serviceId) {
       return NextResponse.json(
-        { error: "Se requiere un ID de servicio o correo de usuario válido para actualizar" },
-        { status: 400 }
+        {
+          error:
+            "Se requiere un ID de servicio o correo de usuario válido para actualizar",
+        },
+        { status: 400 },
       );
     }
 
@@ -112,9 +116,11 @@ export async function PUT(req: NextRequest) {
         instagram: updateData.instagram,
         email: updateData.email,
         image: updateData.image,
-        active: updateData.active, // Ahora permitimos editar activo
+        active: updateData.active,
         validated: updateData.validated,
-        paid: updateData.paid, // Ahora permitimos editar pagado
+        paid: updateData.paid,
+        categoryId: Number(updateData.categoryId),
+        subcategoryId: Number(updateData.subcategoryId),
       },
     });
 
@@ -123,7 +129,7 @@ export async function PUT(req: NextRequest) {
     console.error("Error actualizando servicio:", error);
     return NextResponse.json(
       { error: "Error al actualizar servicio" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

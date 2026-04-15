@@ -1,4 +1,5 @@
 import "./viewServices.css";
+import { useEffect, useState } from "react";
 
 type FilterOption = {
   label: string;
@@ -11,30 +12,62 @@ type CityOption = FilterOption & {
 };
 
 type FiltersProps = {
-  categoryId: string;
-  categoryOptions: FilterOption[];
   cityLoading: boolean;
   cityOptions: CityOption[];
   cityQuery: string;
-  onCategoryChange: (value: string) => void;
   onCityQueryChange: (value: string) => void;
-  onSubcategoryChange: (value: string) => void;
-  subcategoryId: string;
-  subcategoryOptions: FilterOption[];
 };
 
 export default function Filters({
-  categoryId,
-  categoryOptions,
   cityLoading,
   cityOptions,
   cityQuery,
-  onCategoryChange,
   onCityQueryChange,
-  onSubcategoryChange,
-  subcategoryId,
-  subcategoryOptions,
 }: FiltersProps) {
+  const [category, setCategory] = useState<any[]>([]);
+  const [categoryId, setCategoryId] = useState<string>("");
+
+  const [subcategory, setSubcategory] = useState<any[]>([]);
+  const [subcategoryId, setSubcategoryId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchSubcategory = async () => {
+      if (!categoryId) return;
+
+      const res = await fetch("/api/filters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: categoryId }),
+      });
+
+      const subcategory = await res.json();
+      setSubcategory(subcategory);
+    };
+
+    fetchSubcategory();
+  }, [categoryId]);
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const res = await fetch("/api/filters");
+
+        if (!res.ok) throw new Error("Error al traer categorías");
+
+        const category = await res.json();
+        console.log(category);
+
+        setCategory(category);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategory();
+  }, []);
+
   return (
     <section className="filters-section">
       <div className="filters-container">
@@ -69,12 +102,15 @@ export default function Filters({
           <select
             className="filter-select"
             value={categoryId}
-            onChange={(event) => onCategoryChange(event.target.value)}
+            onChange={(event) => {
+              setCategoryId(event.target.value);
+            }}
           >
             <option value="">Select a category</option>
-            {categoryOptions.map((category) => (
-              <option key={category.value} value={category.value}>
-                {category.label}
+
+            {category.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.label}
               </option>
             ))}
           </select>
@@ -85,13 +121,14 @@ export default function Filters({
           <select
             className="filter-select"
             value={subcategoryId}
-            onChange={(event) => onSubcategoryChange(event.target.value)}
+            onChange={(event) => setSubcategoryId(event.target.value)}
             disabled={!categoryId}
           >
             <option value="">Select a subcategory</option>
-            {subcategoryOptions.map((subcategory) => (
-              <option key={subcategory.value} value={subcategory.value}>
-                {subcategory.label}
+
+            {subcategory.map((sub) => (
+              <option key={sub.id} value={sub.id}>
+                {sub.label}
               </option>
             ))}
           </select>
