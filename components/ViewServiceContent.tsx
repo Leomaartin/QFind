@@ -29,7 +29,7 @@ export default function ViewServiceContent() {
           const mapped = data.map((s: any) => ({
             slug: String(s.id),
             name: s.name,
-            address: s.label || s.description || "",
+            address: s.description || "",
             contact: s.phone || "",
             instagram: s.instagram || "",
             image: s.image || "",
