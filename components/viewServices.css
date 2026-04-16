@@ -567,6 +567,12 @@ section {
   position: relative;
   padding: 40px;
   animation: slideUp 0.4s ease-out;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.popup-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .popup-header {

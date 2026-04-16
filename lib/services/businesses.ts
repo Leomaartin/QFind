@@ -12,6 +12,11 @@ export type ServiceCardItem = {
   cityName: string;
   categorySlug: string;
   subcategorySlug: string;
+  countryId?: string;
+  stateId?: string;
+  cityId?: string;
+  categoryId?: string;
+  subcategoryId?: string;
 };
 
 export function getServices(): ServiceCardItem[] {

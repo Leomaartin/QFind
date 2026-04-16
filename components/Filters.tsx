@@ -6,29 +6,96 @@ type FilterOption = {
   value: string;
 };
 
-type CityOption = FilterOption & {
-  placeId?: string;
-  source?: "google" | "fallback";
-};
 
 type FiltersProps = {
-  cityLoading: boolean;
-  cityOptions: CityOption[];
-  cityQuery: string;
-  onCityQueryChange: (value: string) => void;
+  onFiltersChange?: (filters: {
+    countryId: string;
+    stateId: string;
+    cityId: string;
+    categoryId: string;
+    subcategoryId: string;
+  }) => void;
 };
 
-export default function Filters({
-  cityLoading,
-  cityOptions,
-  cityQuery,
-  onCityQueryChange,
-}: FiltersProps) {
+export default function Filters({ onFiltersChange }: FiltersProps) {
   const [category, setCategory] = useState<any[]>([]);
   const [categoryId, setCategoryId] = useState<string>("");
 
   const [subcategory, setSubcategory] = useState<any[]>([]);
   const [subcategoryId, setSubcategoryId] = useState<string>("");
+
+  const [country, setCountry] = useState<any[]>([]);
+  const [countryId, setCountryId] = useState<string>("");
+
+  const [state, setState] = useState<any[]>([]);
+  const [stateId, setStateId] = useState<string>("");
+
+  const [city, setCity] = useState<any[]>([]);
+  const [cityId, setCityId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch("/api/places");
+        if (!res.ok) throw new Error("Error al traer países");
+        const data = await res.json();
+        setCountry(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const fetchStates = async () => {
+      if (!countryId) {
+        setState([]);
+        setStateId("");
+        setCity([]);
+        setCityId("");
+        return;
+      }
+      try {
+        const res = await fetch("/api/places", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ countryId }),
+        });
+        const data = await res.json();
+        setState(data);
+        setStateId("");
+        setCity([]);
+        setCityId("");
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchStates();
+  }, [countryId]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!stateId) {
+        setCity([]);
+        setCityId("");
+        return;
+      }
+      try {
+        const res = await fetch("/api/city", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ stateId }),
+        });
+        const data = await res.json();
+        setCity(data);
+        setCityId("");
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCities();
+  }, [stateId]);
 
   useEffect(() => {
     const fetchSubcategory = async () => {
@@ -68,33 +135,70 @@ export default function Filters({
     fetchCategory();
   }, []);
 
+  useEffect(() => {
+    if (onFiltersChange) {
+      onFiltersChange({ countryId, stateId, cityId, categoryId, subcategoryId });
+    }
+  }, [countryId, stateId, cityId, categoryId, subcategoryId, onFiltersChange]);
+
   return (
     <section className="filters-section">
       <div className="filters-container">
-        <div className="filter-group filter-group-city">
-          <label htmlFor="city-search">City</label>
-          <input
-            id="city-search"
-            className="filter-input"
-            list="city-suggestions"
-            placeholder="Search for a city"
-            type="text"
-            value={cityQuery}
-            onChange={(event) => onCityQueryChange(event.target.value)}
-          />
-          <datalist id="city-suggestions">
-            {cityOptions.map((city) => (
-              <option
-                key={`${city.value}-${city.placeId ?? city.source ?? "local"}`}
-                value={city.label}
-              />
+        <div className="filter-group">
+          <label>País</label>
+          <select
+            className="filter-select"
+            value={countryId}
+            onChange={(event) => {
+              setCountryId(event.target.value);
+            }}
+          >
+            <option value="">Selecciona un país</option>
+            {country.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
             ))}
-          </datalist>
-          <span className="filter-help">
-            {cityLoading
-              ? "Searching cities..."
-              : "City suggestions from Google Maps"}
-          </span>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label>Provincia</label>
+          <select
+            className="filter-select"
+            value={stateId}
+            onChange={(event) => {
+              setStateId(event.target.value);
+            }}
+            disabled={!countryId}
+          >
+            <option value="">Selecciona una provincia</option>
+            {state.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label>Ciudad</label>
+          <select
+            className="filter-select"
+            value={cityId}
+            onChange={(event) => {
+              const selectedCityId = event.target.value;
+              setCityId(selectedCityId);
+            }}
+            disabled={!stateId}
+          >
+            <option value="">Selecciona una ciudad</option>
+            {city.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="filter-group">

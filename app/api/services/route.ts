@@ -38,6 +38,9 @@ export async function POST(req: NextRequest) {
         userId: user.id,
         categoryId: Number(serviceData.categoryId),
         subcategoryId: Number(serviceData.subcategoryId),
+        countryId: serviceData.countryId ? Number(serviceData.countryId) : null,
+        stateId: serviceData.stateId ? Number(serviceData.stateId) : null,
+        cityId: serviceData.cityId ? Number(serviceData.cityId) : null,
 
         active: serviceData.active || false,
         validated: serviceData.validated || false,
@@ -121,6 +124,9 @@ export async function PUT(req: NextRequest) {
         paid: updateData.paid,
         categoryId: Number(updateData.categoryId),
         subcategoryId: Number(updateData.subcategoryId),
+        countryId: updateData.countryId ? Number(updateData.countryId) : null,
+        stateId: updateData.stateId ? Number(updateData.stateId) : null,
+        cityId: updateData.cityId ? Number(updateData.cityId) : null,
       },
     });
 

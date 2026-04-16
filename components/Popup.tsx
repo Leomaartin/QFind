@@ -54,6 +54,15 @@ export default function AddServicePopup({
   const [subcategory, setSubcategory] = useState<any[]>([]);
   const [subcategoryId, setSubcategoryId] = useState<string>("");
 
+  const [country, setCountry] = useState<any[]>([]);
+  const [countryId, setCountryId] = useState<string>("");
+
+  const [state, setState] = useState<any[]>([]);
+  const [stateId, setStateId] = useState<string>("");
+
+  const [city, setCity] = useState<any[]>([]);
+  const [cityId, setCityId] = useState<string>("");
+
   useEffect(() => {
     const fetchSubcategory = async () => {
       if (!categoryId) return;
@@ -92,7 +101,58 @@ export default function AddServicePopup({
     fetchCategory();
   }, []);
 
-  // Pre-cargar datos si estamos en modo edición
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch("/api/places");
+        if (!res.ok) throw new Error("Error al traer países");
+        const data = await res.json();
+        setCountry(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const fetchStates = async () => {
+      if (!countryId) {
+        setState([]);
+        return;
+      }
+      try {
+        const res = await fetch("/api/places", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ countryId }),
+        });
+        const data = await res.json();
+        setState(data);
+      } catch (error) {}
+    };
+    fetchStates();
+  }, [countryId]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!stateId) {
+        setCity([]);
+        return;
+      }
+      try {
+        const res = await fetch("/api/city", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ stateId }),
+        });
+        const data = await res.json();
+        setCity(data);
+      } catch (error) {}
+    };
+    fetchCities();
+  }, [stateId]);
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -106,6 +166,11 @@ export default function AddServicePopup({
       if (initialData.image) {
         setImagePreview(initialData.image);
       }
+      if (initialData.categoryId) setCategoryId(String(initialData.categoryId));
+      if (initialData.subcategoryId) setSubcategoryId(String(initialData.subcategoryId));
+      if (initialData.countryId) setCountryId(String(initialData.countryId));
+      if (initialData.stateId) setStateId(String(initialData.stateId));
+      if (initialData.cityId) setCityId(String(initialData.cityId));
     }
   }, [initialData]);
 
@@ -153,6 +218,9 @@ export default function AddServicePopup({
       ...formData,
       categoryId,
       subcategoryId,
+      countryId,
+      stateId,
+      cityId,
       email: userEmail,
       userEmail: userEmail,
       validated: false,
@@ -230,6 +298,7 @@ export default function AddServicePopup({
                 value={categoryId}
                 onChange={(event) => {
                   setCategoryId(event.target.value);
+                  setSubcategoryId("");
                 }}
               >
                 <option value="">Select a category</option>
@@ -260,13 +329,64 @@ export default function AddServicePopup({
               </select>
             </div>
 
+            <div className="filter-group">
+              <label>País</label>
+              <select
+                className="filter-select"
+                value={countryId}
+                onChange={(event) => {
+                  setCountryId(event.target.value);
+                  setStateId("");
+                  setCityId("");
+                }}
+              >
+                <option value="">Selecciona un país</option>
+                {country.map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Provincia</label>
+              <select
+                className="filter-select"
+                value={stateId}
+                onChange={(event) => {
+                  setStateId(event.target.value);
+                  setCityId("");
+                }}
+                disabled={!countryId}
+              >
+                <option value="">Selecciona una provincia</option>
+                {state.map((s) => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Ciudad</label>
+              <select
+                className="filter-select"
+                value={cityId}
+                onChange={(event) => setCityId(event.target.value)}
+                disabled={!stateId}
+              >
+                <option value="">Selecciona una ciudad</option>
+                {city.map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+
             <div className="form-group full-width">
-              <label>Descripción</label>
-              <textarea
+              <label>¿Cómo aparece exactamente tu local en Google Maps?</label>
+              <input
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe brevemente tu servicio..."
+                placeholder="Ejemplo: Restaurant El Paso, Córdoba..."
                 required
               />
             </div>
