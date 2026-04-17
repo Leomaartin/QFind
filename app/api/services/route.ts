@@ -67,7 +67,16 @@ export async function GET(req: NextRequest) {
     if (email) {
       const user = await prisma.user.findUnique({
         where: { email: email },
-        include: { service: true },
+        include: { 
+          service: {
+            include: {
+              plans: {
+                include: { planType: true },
+                orderBy: { endDate: 'desc' }
+              }
+            }
+          } 
+        },
       });
       return NextResponse.json(user?.service || null);
     }

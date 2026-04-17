@@ -103,16 +103,25 @@ model User {
 
   service   Service?
 }
+model PlanType {
+  id       Int    @id @default(autoincrement())
+  name     String
+  label    String
+  duration Int
+  price    Float @default(0)
+
+  plans    Plan[]   
+}
 
 model Plan {
-  id          Int      @id @default(autoincrement())
-  name        String
-  label       String
-  duration    Int
-  startDate   DateTime
-  endDate     DateTime
+  id            Int      @id @default(autoincrement())
+  startDate     DateTime
+  endDate       DateTime
   paymentStatus Boolean
 
-  serviceId   Int
-  service     Service @relation(fields: [serviceId], references: [id])
+  planTypeId Int
+  planType   PlanType @relation(fields: [planTypeId], references: [id])
+
+  serviceId Int
+  service   Service @relation(fields: [serviceId], references: [id])
 }

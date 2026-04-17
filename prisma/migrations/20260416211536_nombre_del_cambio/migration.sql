@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "PlanType" ADD COLUMN     "price" DOUBLE PRECISION NOT NULL DEFAULT 0;

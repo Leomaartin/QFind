@@ -24,12 +24,20 @@ export default function ServicesCards({
 
       {services.length ? (
         <div className="row g-3">
-          {services.map((service) => {
+          {services.map((service, index) => {
             const phoneDigits = getPhoneDigits(service.contact);
             const instagramHandle = getInstagramHandle(service.instagram);
 
             return (
-              <div key={service.slug} className="service-col">
+              <div 
+                key={service.slug} 
+                className="service-col"
+                style={{
+                  animation: `fadeInCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
+                  animationDelay: `${index * 0.05}s`,
+                  opacity: 0
+                }}
+              >
                 <div className="service-card-shell">
                   <div className="service-card">
                     <div
