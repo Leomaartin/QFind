@@ -31,9 +31,11 @@ export default function ViewServiceContent() {
             slug: String(s.id),
             name: s.name,
             address: s.description || "",
-            contact: s.phone || "",
+            phone: s.phone || "",
             instagram: s.instagram || "",
             image: s.image || "",
+            label: s.label || "",
+            active: s.active,
             citySlug: String(s.cityId || ""),
             cityName: "",
             categorySlug: String(s.categoryId || ""),
@@ -62,14 +64,30 @@ export default function ViewServiceContent() {
   );
 
   const filteredServices = useMemo<ServiceCardItem[]>(() => {
-    return allServices.filter(s => {
-      const matchCountry = !filters.countryId || s.countryId === filters.countryId;
-      const matchState = !filters.stateId || s.stateId === filters.stateId;
-      const matchCity = !filters.cityId || s.cityId === filters.cityId;
-      const matchCategory = !filters.categoryId || s.categoryId === filters.categoryId;
-      const matchSubcategory = !filters.subcategoryId || s.subcategoryId === filters.subcategoryId;
+    return allServices.filter((s) => {
+      const matchCountry =
+        !filters.countryId || s.countryId === filters.countryId;
 
-      return matchCountry && matchState && matchCity && matchCategory && matchSubcategory;
+      const matchState =
+        !filters.stateId || s.stateId === filters.stateId;
+
+      const matchCity =
+        !filters.cityId || s.cityId === filters.cityId;
+
+      const matchCategory =
+        !filters.categoryId || s.categoryId === filters.categoryId;
+
+      const matchSubcategory =
+        !filters.subcategoryId || s.subcategoryId === filters.subcategoryId;
+
+      return (
+        s.active &&
+        matchCountry &&
+        matchState &&
+        matchCity &&
+        matchCategory &&
+        matchSubcategory
+      );
     });
   }, [allServices, filters]);
 
@@ -117,7 +135,7 @@ export default function ViewServiceContent() {
       <Login onUserChange={(user) => setCurrentUser(user)} />
       {currentUser && (
         <div className="add-service-trigger-container" style={{ gap: '15px' }}>
-          
+
           {userService && !activePlan && (
             <button
               className="add-service-trigger-btn"
@@ -137,7 +155,7 @@ export default function ViewServiceContent() {
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              Elegir Plan
+              Choose a plan
             </button>
           )}
 
@@ -171,7 +189,7 @@ export default function ViewServiceContent() {
                 </>
               )}
             </svg>
-            {userService ? "Editar Servicio" : "Agregar Servicio"}
+            {userService ? "Edit Service" : "Add Service"}
           </button>
         </div>
       )}
@@ -186,13 +204,13 @@ export default function ViewServiceContent() {
           stateOptions={[]}
           countryOptions={[]}
           user={currentUser}
-          initialData={userService} 
+          initialData={userService}
         />
       )}
 
       {isPlanPopupOpen && userService && (
         <PlanSelectorPopup
-          onClose={() => { 
+          onClose={() => {
             setIsPlanPopupOpen(false);
             currentUser?.email && fetchUserService(currentUser.email);
           }}

@@ -2,21 +2,25 @@ import { businessSeeds } from "@/data/businesses";
 import { mvpCategories, mvpCities } from "@/data/mvpCatalog";
 
 export type ServiceCardItem = {
-  slug: string;
+  slug: number;
   name: string;
   address: string;
-  contact: string;
+  phone: string;
   instagram: string;
   image: string;
   citySlug: string;
   cityName: string;
   categorySlug: string;
   subcategorySlug: string;
+  label?: string;
+  categoryName?: string;
   countryId?: string;
   stateId?: string;
   cityId?: string;
   categoryId?: string;
   subcategoryId?: string;
+  active?: boolean;
+  paid?: boolean;
 };
 
 export function getServices(): ServiceCardItem[] {

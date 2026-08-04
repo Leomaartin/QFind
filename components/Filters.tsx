@@ -145,7 +145,7 @@ export default function Filters({ onFiltersChange }: FiltersProps) {
     <section className="filters-section">
       <div className="filters-container">
         <div className="filter-group">
-          <label>País</label>
+          <label>Country</label>
           <select
             className="filter-select"
             value={countryId}
@@ -153,7 +153,7 @@ export default function Filters({ onFiltersChange }: FiltersProps) {
               setCountryId(event.target.value);
             }}
           >
-            <option value="">Selecciona un país</option>
+            <option value="">Selecciona country</option>
             {country.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.label}
@@ -163,7 +163,7 @@ export default function Filters({ onFiltersChange }: FiltersProps) {
         </div>
 
         <div className="filter-group">
-          <label>Provincia</label>
+          <label>State</label>
           <select
             className="filter-select"
             value={stateId}
@@ -172,7 +172,7 @@ export default function Filters({ onFiltersChange }: FiltersProps) {
             }}
             disabled={!countryId}
           >
-            <option value="">Selecciona una provincia</option>
+            <option value="">Select state</option>
             {state.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.label}
@@ -182,7 +182,7 @@ export default function Filters({ onFiltersChange }: FiltersProps) {
         </div>
 
         <div className="filter-group">
-          <label>Ciudad</label>
+          <label>City</label>
           <select
             className="filter-select"
             value={cityId}
@@ -192,7 +192,7 @@ export default function Filters({ onFiltersChange }: FiltersProps) {
             }}
             disabled={!stateId}
           >
-            <option value="">Selecciona una ciudad</option>
+            <option value="">Select city</option>
             {city.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.label}

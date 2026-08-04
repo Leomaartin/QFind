@@ -118,25 +118,36 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    // Construir el objeto de actualización dinámicamente para no sobreescribir
+    // campos que no vengan en el body (ej: categoryId, subcategoryId, stateId, etc.)
+    const data: Record<string, unknown> = {};
+
+    if (updateData.name !== undefined) data.name = updateData.name;
+    if (updateData.label !== undefined) data.label = updateData.label;
+    if (updateData.description !== undefined) data.description = updateData.description;
+    if (updateData.phone !== undefined) data.phone = updateData.phone;
+    if (updateData.instagram !== undefined) data.instagram = updateData.instagram;
+    if (updateData.email !== undefined) data.email = updateData.email;
+    if (updateData.image !== undefined) data.image = updateData.image;
+    if (updateData.active !== undefined) data.active = updateData.active;
+    if (updateData.validated !== undefined) data.validated = updateData.validated;
+    if (updateData.paid !== undefined) data.paid = updateData.paid;
+
+    // Estos campos solo se actualizan si vienen explícitamente en el body
+    if (updateData.categoryId !== undefined)
+      data.categoryId = Number(updateData.categoryId);
+    if (updateData.subcategoryId !== undefined)
+      data.subcategoryId = Number(updateData.subcategoryId);
+    if (updateData.countryId !== undefined)
+      data.countryId = updateData.countryId ? Number(updateData.countryId) : null;
+    if (updateData.stateId !== undefined)
+      data.stateId = updateData.stateId ? Number(updateData.stateId) : null;
+    if (updateData.cityId !== undefined)
+      data.cityId = updateData.cityId ? Number(updateData.cityId) : null;
+
     const updatedService = await prisma.service.update({
       where: { id: serviceId },
-      data: {
-        name: updateData.name,
-        label: updateData.label,
-        description: updateData.description,
-        phone: updateData.phone,
-        instagram: updateData.instagram,
-        email: updateData.email,
-        image: updateData.image,
-        active: updateData.active,
-        validated: updateData.validated,
-        paid: updateData.paid,
-        categoryId: Number(updateData.categoryId),
-        subcategoryId: Number(updateData.subcategoryId),
-        countryId: updateData.countryId ? Number(updateData.countryId) : null,
-        stateId: updateData.stateId ? Number(updateData.stateId) : null,
-        cityId: updateData.cityId ? Number(updateData.cityId) : null,
-      },
+      data,
     });
 
     return NextResponse.json(updatedService);
