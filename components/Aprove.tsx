@@ -22,6 +22,17 @@ export default function Approve() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState(true);
+  const handleToggle = () => {
+    setIsDark((prevIsDark) => !prevIsDark);
+  };
+  useEffect(() => {
+    if (!isDark) {
+      document.body.classList.add("LigthVersion");
+    } else {
+      document.body.classList.remove("LigthVersion");
+    }
+  }, [isDark]);
 
   useEffect(() => {
     fetchServices();
@@ -124,6 +135,18 @@ export default function Approve() {
   return (
     <section className="services-section mb-5">
       <h2 className="section-title mb-4">Approval Panel</h2>
+      <label className="theme-switch" aria-label="Cambiar tema">
+        <input
+          type="checkbox"
+          checked={isDark}
+          onChange={handleToggle}
+        />
+        <div className="switch-slider">
+          <i className="fa-solid fa-sun icon-sun"></i>
+          <i className="fa-solid fa-moon icon-moon"></i>
+          <span className="switch-thumb"></span>
+        </div>
+      </label>
 
       {services.length ? (
         <div className="admin-grid">

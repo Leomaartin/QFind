@@ -16,9 +16,23 @@ export default function ViewServiceContent() {
     categoryId: "",
     subcategoryId: "",
   });
-
-
+  const [isDark, setIsDark] = useState(true);
   const [userService, setUserService] = useState<any>(null);
+
+
+
+  const handleToggle = () => {
+    setIsDark((prevIsDark) => !prevIsDark);
+  };
+  useEffect(() => {
+    if (!isDark) {
+      document.body.classList.add("LigthVersion");
+    } else {
+      document.body.classList.remove("LigthVersion");
+    }
+  }, [isDark]);
+
+
 
   useEffect(() => {
     const fetchService = async () => {
@@ -139,6 +153,19 @@ export default function ViewServiceContent() {
 
   return (
     <div className="container-service">
+      <label className="theme-switch" aria-label="Cambiar tema">
+        <input
+          type="checkbox"
+          checked={isDark}
+          onChange={handleToggle}
+        />
+        <div className="switch-slider">
+          <i className="fa-solid fa-sun icon-sun"></i>
+          <i className="fa-solid fa-moon icon-moon"></i>
+          <span className="switch-thumb"></span>
+        </div>
+      </label>
+
       <Filters onFiltersChange={setFilters} />
       {isFullyFiltered ? <Cards services={filteredServices} showTitle /> : null}
     </div>

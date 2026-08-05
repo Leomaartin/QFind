@@ -1,0 +1,208 @@
+.login-wrapper {
+    margin: 2rem 0;
+}
+
+/*==========================
+  Usuario Logueado
+==========================*/
+
+.user-info-section {
+
+    max-width: 450px;
+    margin: auto;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+
+    border-radius: 20px;
+
+    transition: .3s;
+
+}
+
+.user-info {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 18px 22px;
+
+}
+
+.user-data {
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+.user-avatar {
+
+    width: 52px;
+    height: 52px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 2px solid var(--accent);
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .18);
+
+}
+
+.content {
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.user-title {
+
+    margin-top: 0;
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+
+    color: var(--text-main);
+
+}
+
+.user-subtitle {
+
+    margin-top: 4px;
+
+    color: var(--text-muted);
+
+    font-size: .9rem;
+
+}
+
+.logout-btn {
+
+    padding: 8px 18px;
+
+    border-radius: 12px;
+
+    background: rgba(239, 68, 68, .08);
+
+    border: 1px solid rgba(239, 68, 68, .25);
+
+    color: #ef4444;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+}
+
+.logout-btn:hover {
+
+    background: #ef4444;
+
+    color: white;
+
+}
+
+
+/*==========================
+  Login
+==========================*/
+
+.login-card-container {
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+.login-card {
+
+    width: 100%;
+
+    max-width: 450px;
+
+    padding: 35px;
+
+    border-radius: 24px;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border);
+
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .20);
+
+    transition:
+        background .3s,
+        border .3s,
+        transform .3s,
+        box-shadow .3s;
+
+}
+
+.login-card:hover {
+
+    transform: translateY(-4px);
+
+}
+
+.login-title {
+
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 1.7rem;
+
+    font-weight: 800;
+
+    color: var(--text-main);
+
+}
+
+.login-description {
+
+    margin: 10px 0 28px;
+
+    text-align: center;
+
+    color: var(--text-muted);
+
+    line-height: 1.5;
+
+}
+
+.google-login {
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+
+/*==========================
+  Light Version
+==========================*/
+
+body.LigthVersion .login-card {
+
+    background: white;
+
+    box-shadow:
+        0 20px 45px rgba(15, 23, 42, .08);
+
+}
+
+body.LigthVersion .user-info-section {
+
+    background: white;
+
+}

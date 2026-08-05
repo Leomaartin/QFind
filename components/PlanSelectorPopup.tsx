@@ -63,7 +63,7 @@ export default function PlanSelectorPopup({ onClose, serviceId }: PlanSelectorPo
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
         <div className="popup-header">
-          <h2>Elegir un Plan para tu Servicio</h2>
+          <h2 >Elegir un Plan para tu Servicio</h2>
           <button className="close-btn" onClick={onClose}>
             &times;
           </button>
@@ -76,27 +76,27 @@ export default function PlanSelectorPopup({ onClose, serviceId }: PlanSelectorPo
             <p>No hay planes disponibles por el momento.</p>
           ) : (
             planTypes.map((plan) => (
-              <div key={plan.id} style={{ 
-                background: 'var(--bg-soft)', 
-                border: '1px solid var(--border)', 
-                borderRadius: 'var(--radius-lg)', 
-                padding: '24px', 
-                width: '100%', 
+              <div key={plan.id} style={{
+                background: 'var(--bg-soft)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '24px',
+                width: '100%',
                 maxWidth: '280px',
                 textAlign: 'center',
                 boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
                 transition: 'transform 0.3s ease',
                 cursor: 'pointer'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
                 <h3 style={{ color: 'white', marginBottom: '10px', fontSize: '1.4rem' }}>{plan.label}</h3>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>Duración: {plan.duration} días</p>
                 <p style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'white', marginBottom: '20px' }}>
                   ${plan.price}
                 </p>
-                <button 
+                <button
                   onClick={() => handleSelectPlan(plan.id)}
                   style={{
                     background: 'var(--accent)',

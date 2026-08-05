@@ -17,16 +17,12 @@ html {
 
 body {
   position: relative;
-  background: radial-gradient(
-      circle at 20% 30%,
+  background: radial-gradient(circle at 20% 30%,
       rgba(128, 155, 166, 0.12),
-      transparent 40%
-    ),
-    radial-gradient(
-      circle at 80% 70%,
+      transparent 40%),
+    radial-gradient(circle at 80% 70%,
       rgba(140, 97, 59, 0.08),
-      transparent 40%
-    ),
+      transparent 40%),
     linear-gradient(180deg, #0f0f10 0%, #1d2526 100%);
   color: #fff;
   font-family: var(--font-geist-sans), sans-serif;
@@ -39,24 +35,18 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(
-      circle at 50% 18%,
+    radial-gradient(circle at 50% 18%,
       rgba(128, 155, 166, 0.12),
       rgba(128, 155, 166, 0.04) 24%,
-      transparent 52%
-    ),
-    radial-gradient(
-      circle at 50% 92%,
+      transparent 52%),
+    radial-gradient(circle at 50% 92%,
       rgba(140, 97, 59, 0.08),
-      transparent 34%
-    ),
-    repeating-linear-gradient(
-      90deg,
+      transparent 34%),
+    repeating-linear-gradient(90deg,
       rgba(255, 255, 255, 0.012) 0,
       rgba(255, 255, 255, 0.012) 1px,
       transparent 1px,
-      transparent 3px
-    );
+      transparent 3px);
   opacity: 0.8;
 }
 
@@ -68,13 +58,11 @@ body::after {
   z-index: 0;
   background:
     radial-gradient(circle at center, transparent 54%, rgba(0, 0, 0, 0.2) 100%),
-    linear-gradient(
-      180deg,
+    linear-gradient(180deg,
       rgba(0, 0, 0, 0.12),
       transparent 20%,
       transparent 78%,
-      rgba(0, 0, 0, 0.18)
-    );
+      rgba(0, 0, 0, 0.18));
 }
 
 input {
@@ -98,4 +86,108 @@ h1,
 h2,
 h3 {
   color: #ffffff;
+}
+
+/* =====================================================
+   QFIND - GLOBAL & LAYOUT (LIGHT VERSION)
+===================================================== */
+
+.LigthVersion html {
+  scroll-padding-top: 112px;
+}
+
+.LigthVersion .app-shell {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Gradiente suave en la parte superior con un toque lavanda pastel */
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08), transparent 60%);
+}
+
+.LigthVersion .app-content {
+  position: relative;
+  z-index: 1;
+}
+
+.LigthVersion body {
+  position: relative;
+  /* Fondo blanco brillante con destellos suaves pastel (azul/índigo y rosa/violeta) */
+  background:
+    radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.05), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(236, 72, 153, 0.04), transparent 40%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #334155;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+.LigthVersion body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Reemplazo de los puntos/mallas oscuras por un patrón ultra sutil claro */
+  background:
+    radial-gradient(circle at 50% 18%, rgba(99, 102, 241, 0.06), rgba(99, 102, 241, 0.02) 24%, transparent 52%),
+    radial-gradient(circle at 50% 92%, rgba(244, 63, 94, 0.04), transparent 34%),
+    repeating-linear-gradient(90deg,
+      rgba(0, 0, 0, 0.015) 0,
+      rgba(0, 0, 0, 0.015) 1px,
+      transparent 1px,
+      transparent 3px);
+  opacity: 0.9;
+}
+
+.LigthVersion body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Suavizado de bordes/degradado claro */
+  background:
+    radial-gradient(circle at center, transparent 60%, rgba(226, 232, 240, 0.3) 100%),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.4),
+      transparent 20%,
+      transparent 78%,
+      rgba(241, 245, 249, 0.5));
+}
+
+/* =====================================================
+   INPUTS, CARDS & TYPOGRAPHY
+===================================================== */
+
+.LigthVersion input {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1e293b !important;
+  transition: all 0.2s ease;
+}
+
+.LigthVersion input:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+.LigthVersion input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.LigthVersion .card {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px;
+  color: #334155;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.LigthVersion h1,
+.LigthVersion h2,
+.LigthVersion h3,
+.LigthVersion h4,
+.LigthVersion h5,
+.LigthVersion h6 {
+  color: #1e293b;
 }

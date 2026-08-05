@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import "./viewServices.css";
+import "./viewServices.css"; // 👈 Un único import con ambas versiones adentro
 import Banner from "@/components/Banner";
 import Cards from "@/components/Cards";
 import Filters from "@/components/Filters";
@@ -13,6 +13,16 @@ import { type ServiceCardItem } from "@/lib/services/businesses";
 
 export default function ViewServiceContent() {
   const [allServices, setAllServices] = useState<ServiceCardItem[]>([]);
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    if (!isDark) {
+      document.body.classList.add("LigthVersion");
+    } else {
+      document.body.classList.remove("LigthVersion");
+    }
+  }, [isDark]);
+
   const [filters, setFilters] = useState({
     countryId: "",
     stateId: "",
@@ -93,9 +103,12 @@ export default function ViewServiceContent() {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isPlanPopupOpen, setIsPlanPopupOpen] = useState(false);
-
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userService, setUserService] = useState<any>(null);
+
+  const handleToggle = () => {
+    setIsDark((prevIsDark) => !prevIsDark);
+  };
 
   const activePlan = useMemo(() => {
     if (!userService?.plans?.length) return null;
@@ -131,11 +144,27 @@ export default function ViewServiceContent() {
 
   return (
     <div className="container-service">
-      <Banner />
       <Login onUserChange={(user) => setCurrentUser(user)} />
-      {currentUser && (
-        <div className="add-service-trigger-container" style={{ gap: '15px' }}>
 
+      <Banner />
+
+      <label className="theme-switch" aria-label="Cambiar tema">
+        <input
+          type="checkbox"
+          checked={isDark}
+          onChange={handleToggle}
+        />
+        <div className="switch-slider">
+          <i className="fa-solid fa-sun icon-sun"></i>
+          <i className="fa-solid fa-moon icon-moon"></i>
+          <span className="switch-thumb"></span>
+        </div>
+      </label>
+      {currentUser && (
+        <div
+          className="add-service-trigger-container"
+          style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
+        >
           {userService && !activePlan && (
             <button
               className="add-service-trigger-btn"
@@ -158,11 +187,44 @@ export default function ViewServiceContent() {
               Choose a plan
             </button>
           )}
+          {currentUser?.email === "leonelmartin9808@gmail.com" && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <a
+                href="http://localhost:3000/admin"
+                className="add-service-trigger-btn"
+                style={{ textDecoration: 'none' }}
+              >
+                <i className="fa-solid fa-crown" ></i> Approve Services
+              </a>
+
+              <a
+                href="http://localhost:3000/crud"
+                className="add-service-trigger-btn"
+                style={{ textDecoration: 'none' }}
+              >
+                <i className="fa-solid fa-crown" ></i> Manage Services
+              </a>
+            </div>
+          )}
 
           {userService && activePlan && (
-            <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(58, 81, 88, 0.2)', padding: '10px 20px', borderRadius: 'var(--radius-md)', color: 'var(--text-main)', border: '1px solid var(--accent)' }}>
-              <span style={{ fontWeight: 'bold', marginRight: '8px' }}>Mi Plan: {activePlan.planType?.label || 'Activo'}</span>
-              <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>({daysRemaining} días restantes)</span>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                background: 'rgba(58, 81, 88, 0.2)',
+                padding: '10px 20px',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--text-main)',
+                border: '1px solid var(--accent)'
+              }}
+            >
+              <span style={{ fontWeight: 'bold', marginRight: '8px' }}>
+                Mi Plan: {activePlan.planType?.label || 'Activo'}
+              </span>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                ({daysRemaining} días restantes)
+              </span>
             </div>
           )}
 
@@ -179,10 +241,8 @@ export default function ViewServiceContent() {
               strokeLinejoin="round"
             >
               {userService ? (
-                // Icono de editar
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
               ) : (
-                // Icono de más
                 <>
                   <line x1="12" y1="5" x2="12" y2="19"></line>
                   <line x1="5" y1="12" x2="19" y2="12"></line>
