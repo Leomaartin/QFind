@@ -47,6 +47,10 @@ section {
   color: white;
 }
 
+.section-title h2 {
+  color: #0f1719;
+}
+
 /* =====================================================
    BANNER
 ===================================================== */
@@ -96,6 +100,10 @@ section {
   max-width: 100%;
   margin: 0 auto 60px;
   padding: 40px;
+}
+
+.services-section .section-title h2 {
+  color: #030303;
 }
 
 .services-empty-state {
@@ -1172,7 +1180,11 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
-  width: 100%;
+  /* MÁRGENES Y ANCHO AJUSTADOS */
+  width: 90%;
+  max-width: 1200px;
+  margin: 35px auto;
+  /* Centra el contenido y da margen arriba/abajo */
 }
 
 .admin-card {
@@ -1195,7 +1207,7 @@ section {
 .admin-card-media {
   position: relative;
   width: 100%;
-  height: 160px;
+  height: 180px;
   overflow: hidden;
   background: #111a1c;
 }
@@ -1203,23 +1215,20 @@ section {
 .admin-card-img {
   width: 100%;
   height: 100%;
-  background-size: cover;
+  /* IMAGEN AJUSTADA PARA QUE NO SE CORTE */
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
-  transition: filter 0.3s ease;
 }
 
+/* EFECTO DE DIFUMINADO / OSCURECIMIENTO ELIMINADO AL PASAR EL MOUSE */
 .admin-card:hover .admin-card-img {
-  filter: brightness(0.92);
+  filter: none;
 }
 
+/* GRADIENTE Y DIFUMINADO SOBRE LA IMAGEN ELIMINADO */
 .admin-card-gradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top,
-      rgba(24, 35, 38, 0.98) 0%,
-      rgba(24, 35, 38, 0.3) 60%,
-      transparent 100%);
-  pointer-events: none;
+  display: none;
 }
 
 .admin-card-body {
@@ -1334,7 +1343,6 @@ section {
 .admin-toggle-switch input:checked+.admin-slider:before {
   transform: translateX(22px);
 }
-
 
 /* BUTTONS (EDIT / DELETE)
 ===================================================== */
@@ -1504,6 +1512,94 @@ section {
 /* Efecto hover leve */
 .theme-switch:hover .switch-thumb {
   scale: 1.05;
+}
+
+/* =====================================================
+   SEARCH BAR STYLES (COMPACT & MODERN)
+===================================================== */
+
+.search-bar-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0 25px 0;
+}
+
+.search-input-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  /* Evita que ocupe toda la pantalla */
+  display: flex;
+  align-items: center;
+}
+
+/* Ícono de lupa */
+.search-icon {
+  position: absolute;
+  left: 16px;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+/* Input principal (Modo Oscuro por defecto) */
+.search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 42px 0 44px;
+  /* Espacio para lupa e ícono de borrar */
+  background: #1e293b;
+  border: 1.5px solid #334155;
+  border-radius: 999px;
+  /* Diseño en píldora, muy limpio */
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 500;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search-input::placeholder {
+  color: #64748b;
+}
+
+.search-input:hover {
+  border-color: #475569;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  background: #0f172a;
+}
+
+.search-input-container:focus-within .search-icon {
+  color: #6366f1;
+}
+
+/* Botón para borrar el texto (X) */
+.clear-search-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-search-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
 }
 
 /* =====================================================
@@ -2987,4 +3083,101 @@ body.LigthVersion {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* =====================================================
+   SEARCH BAR STYLES (COMPACT & MODERN)
+===================================================== */
+
+.search-bar-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0 25px 0;
+}
+
+.search-input-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  /* Evita que ocupe toda la pantalla */
+  display: flex;
+  align-items: center;
+}
+
+/* Ícono de lupa */
+.search-icon {
+  position: absolute;
+  left: 16px;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+/* Input principal (Modo Oscuro por defecto) */
+.search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 42px 0 44px;
+  /* Espacio para lupa e ícono de borrar */
+  background: #1e293b;
+  border: 1.5px solid #334155;
+  border-radius: 999px;
+  /* Diseño en píldora, muy limpio */
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 500;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search-input::placeholder {
+  color: #64748b;
+}
+
+.search-input:hover {
+  border-color: #475569;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  background: #0f172a;
+}
+
+.search-input-container:focus-within .search-icon {
+  color: #6366f1;
+}
+
+/* Botón para borrar el texto (X) */
+.clear-search-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-search-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+/* Específico para el modo claro */
+.LigthVersion .services-section .section-title {
+  color: #0f172a;
+}
+
+.LigthVersion .services-empty-state h3 {
+  color: #0f172a;
 }

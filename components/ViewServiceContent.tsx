@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import "./viewServices.css"; // 👈 Un único import con ambas versiones adentro
+import "./viewServices.css";
 import Banner from "@/components/Banner";
 import Cards from "@/components/Cards";
 import Filters from "@/components/Filters";
