@@ -9,10 +9,8 @@ import Filters from "@/components/Filters";
 import AddServicePopup from "@/components/Popup";
 import PlanSelectorPopup from "@/components/PlanSelectorPopup";
 import ServicesMap from "@/components/ServicesMap";
-import { FRONTEND_URL, BACKEND_URL } from "@/lib/config";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-
 import { type ServiceCardItem } from "@/lib/services/businesses";
 
 export default function ViewServiceContent() {
@@ -75,7 +73,6 @@ export default function ViewServiceContent() {
           prev.categoryId ||
           prev.subcategoryId
         );
-
         const hasAny = Boolean(
           newFilters.countryId ||
           newFilters.stateId ||
@@ -119,7 +116,7 @@ export default function ViewServiceContent() {
   useEffect(() => {
     const fetchAllServices = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/services`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services`);
         if (res.ok) {
           const data = await res.json();
           const mapped = data.map((s: any) => ({
@@ -185,15 +182,15 @@ export default function ViewServiceContent() {
       const matchSubcategory =
         !filters.subcategoryId || s.subcategoryId === filters.subcategoryId;
 
-        return (
-          s.active &&
-          matchCountry &&
-          matchState &&
-          matchCity &&
-          matchCategory &&
-          matchSubcategory
-        );
-      });
+      return (
+        s.active &&
+        matchCountry &&
+        matchState &&
+        matchCity &&
+        matchCategory &&
+        matchSubcategory
+      );
+    });
   }, [allServices, filters]);
 
   const [nameSearch, setNameSearch] = useState("");
@@ -240,7 +237,7 @@ export default function ViewServiceContent() {
 
   const handleSubmitGoogle = async (googleUser: any): Promise<string | number | null> => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/login`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -341,7 +338,7 @@ export default function ViewServiceContent() {
 
   const fetchUserService = async (email: string) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/services?email=${encodeURIComponent(email)}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services?email=${encodeURIComponent(email)}`);
       if (response.ok) {
         const data = await response.json();
         setUserService(data);
@@ -459,10 +456,10 @@ export default function ViewServiceContent() {
                 Choose a plan
               </button>
             )}
-            {currentUser?.email === "leonelmartin9808@gmail.com" && (
+            {currentUser?.email === "[EMAIL_ADDRESS]" && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <a
-                  href={`${FRONTEND_URL}/admin`}
+                  href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/admin`}
                   className="add-service-trigger-btn"
                   style={{ textDecoration: 'none' }}
                 >
@@ -470,7 +467,7 @@ export default function ViewServiceContent() {
                 </a>
 
                 <a
-                  href={`${FRONTEND_URL}/crud`}
+                  href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/crud`}
                   className="add-service-trigger-btn"
                   style={{ textDecoration: 'none' }}
                 >
@@ -717,7 +714,7 @@ export default function ViewServiceContent() {
                       <i className="fa-solid fa-crown me-1"></i> Admin Panel
                     </div>
                     <a
-                      href={`${FRONTEND_URL}/admin`}
+                      href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/admin`}
                       className="mobile-drawer-action-btn mobile-btn-admin"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -729,7 +726,7 @@ export default function ViewServiceContent() {
                       <i className="fa-solid fa-chevron-right ms-auto"></i>
                     </a>
                     <a
-                      href={`${FRONTEND_URL}/crud`}
+                      href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/crud`}
                       className="mobile-drawer-action-btn mobile-btn-admin"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
