@@ -98,10 +98,10 @@ export default function Login({ onUserChange }: LoginProps) {
 
       onUserChange?.(userData);
 
-      toast.success(`¡Hola ${userData.name}!`);
+      toast.success(`Welcome, ${userData.name}!`);
     } catch (error) {
       console.error(error);
-      toast.error("No se pudo iniciar sesión");
+      toast.error("Failed to sign in");
     }
   };
 
@@ -109,7 +109,7 @@ export default function Login({ onUserChange }: LoginProps) {
     localStorage.removeItem("user");
     setUser(null);
     onUserChange?.(null);
-    toast.success("Sesión cerrada");
+    toast.success("Signed out successfully");
   };
 
   return (
@@ -128,11 +128,11 @@ export default function Login({ onUserChange }: LoginProps) {
 
               <div className="content">
                 <h5 className="user-title">
-                  ¡Bienvenido, {user.name.split(" ")[0]}!
+                  Welcome, {user.name.split(" ")[0]}!
                 </h5>
 
                 <p className="user-subtitle">
-                  Tu sesión está activa
+                  Your session is active
                 </p>
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function Login({ onUserChange }: LoginProps) {
               className="logout-btn"
               onClick={handleLogout}
             >
-              Cerrar
+              Sign out
             </button>
           </div>
         </div>
@@ -149,17 +149,17 @@ export default function Login({ onUserChange }: LoginProps) {
         <div className="login-card-container">
           <div className="login-card">
             <h4 className="login-title">
-              Acceso a Miembro
+              Member Access
             </h4>
 
             <p className="login-description">
-              Inicia sesión con Google para continuar registrando servicios
+              Sign in with Google to continue managing and adding services
             </p>
 
             <div className="google-login">
               <GoogleLogin
                 onSuccess={onGoogleSuccess}
-                onError={() => toast.error("Error iniciando sesión")}
+                onError={() => toast.error("Failed to sign in")}
                 theme={isLight ? "outline" : "filled_black"}
                 shape="pill"
                 size="large"

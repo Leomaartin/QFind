@@ -1,0 +1,535 @@
+/* =====================================================
+   QFIND & SLDEVS FOOTER STYLES
+===================================================== */
+
+.qfind-footer {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(16, 26, 25, 0.4) 0%, rgba(9, 14, 15, 0.98) 100%);
+  border-top: 1px solid rgba(45, 212, 191, 0.15);
+  margin-top: auto;
+  overflow: hidden;
+  font-family: inherit;
+  color: #e2e8f0;
+}
+
+.qfind-footer-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: radial-gradient(ellipse at center, rgba(0, 223, 129, 0.8) 0%, rgba(45, 212, 191, 0.4) 40%, transparent 80%);
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+.qfind-footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 56px 24px 28px;
+}
+
+/* Grid Layout */
+.qfind-footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.35fr;
+  gap: 40px;
+  align-items: flex-start;
+  margin-bottom: 48px;
+}
+
+.qfind-footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Brand Column */
+.qfind-brand-col {
+  padding-right: 12px;
+}
+
+.qfind-footer-logo-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  transition: transform 0.2s ease;
+}
+
+.qfind-footer-logo-link:hover {
+  transform: translateY(-2px);
+}
+
+.qfind-footer-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.qfind-footer-tagline {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  max-width: 340px;
+}
+
+.qfind-system-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 223, 129, 0.08);
+  border: 1px solid rgba(0, 223, 129, 0.2);
+  border-radius: 999px;
+  width: fit-content;
+  margin-bottom: 22px;
+}
+
+.status-ping {
+  width: 7px;
+  height: 7px;
+  background: #00df81;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00df81;
+  animation: footerPing 2s infinite cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes footerPing {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.status-text {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #00df81;
+  letter-spacing: 0.2px;
+}
+
+/* Social buttons */
+.qfind-social-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qfind-social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.qfind-social-btn:hover {
+  background: rgba(0, 223, 129, 0.15);
+  border-color: rgba(0, 223, 129, 0.35);
+  color: #00df81;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 223, 129, 0.2);
+}
+
+/* Nav Columns */
+.qfind-footer-heading {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 18px;
+  position: relative;
+  display: inline-block;
+}
+
+.qfind-footer-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 24px;
+  height: 2px;
+  background: #00df81;
+  border-radius: 2px;
+}
+
+.qfind-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qfind-footer-links li a {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.qfind-footer-links li a:hover {
+  color: #00df81;
+  transform: translateX(4px);
+}
+
+/* =====================================================
+   SLDEVS SHOWCASE CARD
+===================================================== */
+.sldevs-card {
+  position: relative;
+  background: rgba(18, 28, 30, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.sldevs-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 223, 129, 0.35);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 24px rgba(0, 223, 129, 0.08);
+}
+
+.sldevs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sldevs-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: rgba(0, 223, 129, 0.12);
+  border: 1px solid rgba(0, 223, 129, 0.25);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #00df81;
+  letter-spacing: 0.6px;
+}
+
+.sldevs-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00df81;
+  box-shadow: 0 0 8px #00df81;
+}
+
+.sldevs-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
+.sldevs-logo-img {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.25s ease;
+}
+
+.sldevs-card:hover .sldevs-logo-img {
+  transform: scale(1.04);
+}
+
+.sldevs-pitch {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.sldevs-pitch strong {
+  color: #ffffff;
+}
+
+.sldevs-tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.tech-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+}
+
+.sldevs-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 223, 129, 0.15) 0%, rgba(45, 212, 191, 0.1) 100%);
+  border: 1px solid rgba(0, 223, 129, 0.3);
+  color: #00df81;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.sldevs-contact-btn:hover {
+  background: #00df81;
+  color: #04140d;
+  box-shadow: 0 6px 18px rgba(0, 223, 129, 0.3);
+}
+
+/* =====================================================
+   BOTTOM BAR
+===================================================== */
+.qfind-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.82rem;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.qfind-copyright {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footer-separator {
+  opacity: 0.5;
+}
+
+.heart-icon {
+  color: #ef4444;
+  display: inline-block;
+  animation: pulseHeart 1.6s infinite ease;
+}
+
+@keyframes pulseHeart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.sldevs-bottom-link {
+  color: #00df81;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.sldevs-bottom-link:hover {
+  color: #2dd4bf;
+  text-decoration: underline;
+}
+
+.qfind-back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qfind-back-to-top:hover {
+  background: rgba(0, 223, 129, 0.12);
+  border-color: rgba(0, 223, 129, 0.3);
+  color: #00df81;
+  transform: translateY(-2px);
+}
+
+/* =====================================================
+   LIGHT THEME OVERRIDES (.LigthVersion)
+===================================================== */
+.LigthVersion .qfind-footer {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  border-top-color: #cbd5e1;
+  color: #334155;
+}
+
+.LigthVersion .qfind-footer-glow {
+  background: radial-gradient(ellipse at center, rgba(13, 148, 136, 0.6) 0%, rgba(20, 184, 166, 0.2) 40%, transparent 80%);
+}
+
+.LigthVersion .qfind-footer-heading {
+  color: #0f172a;
+}
+
+.LigthVersion .qfind-footer-heading::after {
+  background: #0d9488;
+}
+
+.LigthVersion .qfind-footer-tagline {
+  color: #475569;
+}
+
+.LigthVersion .qfind-footer-links li a {
+  color: #64748b;
+}
+
+.LigthVersion .qfind-footer-links li a:hover {
+  color: #0d9488;
+}
+
+.LigthVersion .qfind-system-status {
+  background: rgba(13, 148, 136, 0.1);
+  border-color: rgba(13, 148, 136, 0.25);
+}
+
+.LigthVersion .status-text {
+  color: #0f766e;
+}
+
+.LigthVersion .status-ping {
+  background: #0d9488;
+  box-shadow: 0 0 8px #0d9488;
+}
+
+.LigthVersion .qfind-social-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #475569;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.LigthVersion .qfind-social-btn:hover {
+  background: #e6fffa;
+  border-color: #0d9488;
+  color: #0d9488;
+}
+
+.LigthVersion .sldevs-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.LigthVersion .sldevs-card:hover {
+  border-color: #0d9488;
+  box-shadow: 0 16px 36px rgba(13, 148, 136, 0.12);
+}
+
+.LigthVersion .sldevs-pitch {
+  color: #475569;
+}
+
+.LigthVersion .sldevs-pitch strong {
+  color: #0f172a;
+}
+
+.LigthVersion .tech-tag {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.LigthVersion .sldevs-contact-btn {
+  background: rgba(13, 148, 136, 0.1);
+  border-color: rgba(13, 148, 136, 0.3);
+  color: #0f766e;
+}
+
+.LigthVersion .sldevs-contact-btn:hover {
+  background: #0d9488;
+  color: #ffffff;
+}
+
+.LigthVersion .qfind-footer-bottom {
+  border-top-color: #cbd5e1;
+  color: #64748b;
+}
+
+.LigthVersion .sldevs-bottom-link {
+  color: #0d9488;
+}
+
+.LigthVersion .qfind-back-to-top {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.LigthVersion .qfind-back-to-top:hover {
+  background: #e6fffa;
+  border-color: #0d9488;
+  color: #0d9488;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+===================================================== */
+@media (max-width: 992px) {
+  .qfind-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+
+  .qfind-brand-col {
+    grid-column: span 2;
+  }
+
+  .qfind-dev-col {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .qfind-footer-container {
+    padding: 40px 18px 24px;
+  }
+
+  .qfind-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .qfind-brand-col,
+  .qfind-dev-col {
+    grid-column: span 1;
+  }
+
+  .qfind-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .qfind-back-to-top {
+    align-self: flex-end;
+  }
+}

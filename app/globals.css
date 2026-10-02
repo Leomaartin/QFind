@@ -7,7 +7,7 @@ html {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(128, 155, 166, 0.05), transparent 60%);
+  background: radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.1), transparent 60%);
 }
 
 .app-content {
@@ -18,12 +18,12 @@ html {
 body {
   position: relative;
   background: radial-gradient(circle at 20% 30%,
-      rgba(128, 155, 166, 0.12),
-      transparent 40%),
+      rgba(45, 212, 191, 0.12),
+      transparent 45%),
     radial-gradient(circle at 80% 70%,
-      rgba(140, 97, 59, 0.08),
-      transparent 40%),
-    linear-gradient(180deg, #0f0f10 0%, #1d2526 100%);
+      rgba(75, 95, 92, 0.14),
+      transparent 45%),
+    linear-gradient(180deg, #101a19 0%, #172422 100%);
   color: #fff;
   font-family: var(--font-geist-sans), sans-serif;
 }
@@ -36,18 +36,18 @@ body::before {
   z-index: 0;
   background:
     radial-gradient(circle at 50% 18%,
-      rgba(128, 155, 166, 0.12),
-      rgba(128, 155, 166, 0.04) 24%,
+      rgba(45, 212, 191, 0.1),
+      rgba(45, 212, 191, 0.04) 24%,
       transparent 52%),
     radial-gradient(circle at 50% 92%,
-      rgba(140, 97, 59, 0.08),
+      rgba(55, 75, 72, 0.12),
       transparent 34%),
     repeating-linear-gradient(90deg,
-      rgba(255, 255, 255, 0.012) 0,
-      rgba(255, 255, 255, 0.012) 1px,
+      rgba(255, 255, 255, 0.015) 0,
+      rgba(255, 255, 255, 0.015) 1px,
       transparent 1px,
       transparent 3px);
-  opacity: 0.8;
+  opacity: 0.65;
 }
 
 body::after {
@@ -57,27 +57,27 @@ body::after {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(circle at center, transparent 54%, rgba(0, 0, 0, 0.2) 100%),
+    radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.1) 100%),
     linear-gradient(180deg,
-      rgba(0, 0, 0, 0.12),
-      transparent 20%,
-      transparent 78%,
-      rgba(0, 0, 0, 0.18));
+      rgba(255, 255, 255, 0.03),
+      transparent 22%,
+      transparent 76%,
+      rgba(0, 0, 0, 0.1));
 }
 
 input {
-  background-color: #1a1a1c !important;
-  border: 1px solid #2a2a2d !important;
+  background-color: #1a2725 !important;
+  border: 1px solid #2d423e !important;
   color: #ffffff !important;
 }
 
 input::placeholder {
-  color: #888;
+  color: #8ba5a1;
 }
 
 .card {
-  background-color: #1a1a1c !important;
-  border: 1px solid #2a2a2d !important;
+  background-color: #162422 !important;
+  border: 1px solid #283d3a !important;
   border-radius: 14px;
   color: #fff;
 }
@@ -101,8 +101,8 @@ h3 {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  /* Gradiente suave en la parte superior con un toque lavanda pastel */
-  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08), transparent 60%);
+  /* Gradiente suave en la parte superior con un toque verde mar pastel */
+  background: radial-gradient(circle at 50% 0%, rgba(13, 148, 136, 0.08), transparent 60%);
 }
 
 .LigthVersion .app-content {
@@ -112,12 +112,12 @@ h3 {
 
 .LigthVersion body {
   position: relative;
-  /* Fondo blanco brillante con destellos suaves pastel (azul/índigo y rosa/violeta) */
+  /* Fondo gris claro suave con destellos verde mar */
   background:
-    radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.05), transparent 40%),
-    radial-gradient(circle at 80% 60%, rgba(236, 72, 153, 0.04), transparent 40%),
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  color: #334155;
+    radial-gradient(circle at 20% 20%, rgba(13, 148, 136, 0.05), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(20, 184, 166, 0.04), transparent 40%),
+    linear-gradient(180deg, #f2f7f6 0%, #e9efee 100%);
+  color: #263835;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
@@ -127,10 +127,10 @@ h3 {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  /* Reemplazo de los puntos/mallas oscuras por un patrón ultra sutil claro */
+  /* Patrón sutil claro */
   background:
-    radial-gradient(circle at 50% 18%, rgba(99, 102, 241, 0.06), rgba(99, 102, 241, 0.02) 24%, transparent 52%),
-    radial-gradient(circle at 50% 92%, rgba(244, 63, 94, 0.04), transparent 34%),
+    radial-gradient(circle at 50% 18%, rgba(13, 148, 136, 0.06), rgba(13, 148, 136, 0.02) 24%, transparent 52%),
+    radial-gradient(circle at 50% 92%, rgba(94, 120, 116, 0.04), transparent 34%),
     repeating-linear-gradient(90deg,
       rgba(0, 0, 0, 0.015) 0,
       rgba(0, 0, 0, 0.015) 1px,
@@ -145,14 +145,13 @@ h3 {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  /* Suavizado de bordes/degradado claro */
   background:
-    radial-gradient(circle at center, transparent 60%, rgba(226, 232, 240, 0.3) 100%),
+    radial-gradient(circle at center, transparent 60%, rgba(203, 218, 215, 0.3) 100%),
     linear-gradient(180deg,
       rgba(255, 255, 255, 0.4),
       transparent 20%,
       transparent 78%,
-      rgba(241, 245, 249, 0.5));
+      rgba(233, 239, 238, 0.5));
 }
 
 /* =====================================================
@@ -161,25 +160,25 @@ h3 {
 
 .LigthVersion input {
   background-color: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  color: #1e293b !important;
+  border: 1px solid #cbdad7 !important;
+  color: #172926 !important;
   transition: all 0.2s ease;
 }
 
 .LigthVersion input:focus {
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
 }
 
 .LigthVersion input::placeholder {
-  color: #94a3b8 !important;
+  color: #79918d !important;
 }
 
 .LigthVersion .card {
   background-color: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid #cbdad7 !important;
   border-radius: 16px;
-  color: #334155;
+  color: #263835;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
@@ -189,5 +188,94 @@ h3 {
 .LigthVersion h4,
 .LigthVersion h5,
 .LigthVersion h6 {
-  color: #1e293b;
+  color: #172926;
 }
+
+/* =====================================================
+   THEME SWITCH (PILL SLIDER RESTORED)
+===================================================== */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 64px;
+  height: 32px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.switch-slider {
+  position: absolute;
+  inset: 0;
+  background-color: #e5eceb;
+  border: 2px solid #cbdad7;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+  overflow: hidden;
+}
+
+.switch-slider i {
+  font-size: 14px;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
+}
+
+.icon-sun {
+  color: #f59e0b;
+}
+
+.icon-moon {
+  color: #79918d;
+}
+
+.switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease;
+}
+
+.theme-switch input:checked + .switch-slider {
+  background-color: #162422;
+  border-color: #2e4542;
+}
+
+.theme-switch input:checked + .switch-slider .switch-thumb {
+  transform: translateX(32px);
+  background-color: #2dd4bf;
+}
+
+.theme-switch input:checked + .switch-slider .icon-moon {
+  color: #e9efee;
+  transform: scale(1.1) rotate(12deg);
+}
+
+.theme-switch input:not(:checked) + .switch-slider .icon-sun {
+  transform: scale(1.1) rotate(-12deg);
+}
+
+.theme-switch:hover .switch-thumb {
+  transform: scale(1.05);
+}
+
+.theme-switch input:checked:hover + .switch-slider .switch-thumb {
+  transform: translateX(32px) scale(1.05);
+}

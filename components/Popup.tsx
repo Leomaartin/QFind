@@ -23,18 +23,22 @@ interface GoogleUser {
 
 interface AddServicePopupProps {
   onClose: () => void;
-  categories: Category[];
-  cityOptions: Option[];
-  stateOptions: Option[];
-  countryOptions: Option[];
-  user: GoogleUser | null;
+  onSuccess?: () => void;
+  categories?: Category[];
+  cityOptions?: Option[];
+  stateOptions?: Option[];
+  countryOptions?: Option[];
+  user?: GoogleUser | null;
   initialData?: any;
+  isAdmin?: boolean;
 }
 
 export default function AddServicePopup({
   onClose,
+  onSuccess,
   user,
   initialData,
+  isAdmin = false,
 }: AddServicePopupProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -43,7 +47,12 @@ export default function AddServicePopup({
     phone: "",
     instagram: "",
     image: "",
+    email: "",
   });
+
+  const [active, setActive] = useState<boolean>(true);
+  const [paid, setPaid] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -162,6 +171,7 @@ export default function AddServicePopup({
         phone: initialData.phone || "",
         instagram: initialData.instagram || "",
         image: initialData.image || "",
+        email: initialData.email || "",
       });
       if (initialData.image) {
         setImagePreview(initialData.image);
@@ -171,6 +181,11 @@ export default function AddServicePopup({
       if (initialData.countryId) setCountryId(String(initialData.countryId));
       if (initialData.stateId) setStateId(String(initialData.stateId));
       if (initialData.cityId) setCityId(String(initialData.cityId));
+      setActive(initialData.active !== undefined ? Boolean(initialData.active) : true);
+      setPaid(initialData.paid !== undefined ? Boolean(initialData.paid) : false);
+    } else {
+      setActive(true);
+      setPaid(false);
     }
   }, [initialData]);
 
@@ -187,7 +202,7 @@ export default function AddServicePopup({
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        alert("La imagen es demasiado grande. El límite es 2MB.");
+        alert("Image is too large. Maximum size is 2MB.");
         return;
       }
 
@@ -203,33 +218,33 @@ export default function AddServicePopup({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const storedUser = localStorage.getItem("user");
     const userEmail =
       user?.email ||
-      (localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user")!).email
-        : null);
-
-    if (!userEmail) {
-      toast.error("No se pudo encontrar tu correo de sesión.");
-      return;
-    }
+      (storedUser ? JSON.parse(storedUser).email : null) ||
+      formData.email ||
+      initialData?.email ||
+      "admin@qfind.local";
 
     const dataToSend = {
+      ...(initialData?.id ? { id: initialData.id } : {}),
       ...formData,
       categoryId,
       subcategoryId,
       countryId,
       stateId,
       cityId,
-      email: userEmail,
+      email: formData.email || userEmail,
       userEmail: userEmail,
-      validated: false,
-      paid: false,
+      active: isAdmin ? active : (initialData?.active ?? false),
+      paid: isAdmin ? paid : (initialData?.paid ?? false),
+      validated: isAdmin ? true : (initialData?.validated ?? false),
     };
 
     const method = initialData ? "PUT" : "POST";
+    setIsSaving(true);
     const loadingToast = toast.loading(
-      initialData ? "Actualizando servicio..." : "Creando servicio...",
+      initialData ? "Updating service..." : "Creating service...",
     );
 
     try {
@@ -245,22 +260,26 @@ export default function AddServicePopup({
         const errorData = await res.json();
         throw new Error(
           errorData.error ||
-            `Error al ${initialData ? "editar" : "crear"} servicio`,
+            `Failed to ${initialData ? "edit" : "create"} service`,
         );
       }
 
+      // Smooth visual delay so user sees the branded QFind saving experience
+      await new Promise((r) => setTimeout(r, 750));
+
       toast.success(
         initialData
-          ? "¡Servicio actualizado!"
-          : "¡Servicio creado exitosamente!",
+          ? "Service updated successfully!"
+          : "Service created successfully!",
         { id: loadingToast },
       );
 
+      if (onSuccess) {
+        onSuccess();
+      }
       onClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error: any) {
+      setIsSaving(false);
       console.error("🔥 Error:", error.message);
       toast.error(`Error: ${error.message}`, { id: loadingToast });
     }
@@ -269,24 +288,64 @@ export default function AddServicePopup({
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-        <div className="popup-header">
-          <h2>
-            {initialData ? "Editar Mi Servicio" : "Agregar Nuevo Servicio"}
-          </h2>
-          <button className="close-btn" onClick={onClose}>
-            &times;
-          </button>
-        </div>
+        {isSaving ? (
+          <div className="service-saving-anim-card animate-reveal-results">
+            {/* Pulsing radar rings */}
+            <div className="search-radar-halo halo-1" />
+            <div className="search-radar-halo halo-2" />
+            <div className="search-radar-halo halo-3" />
+
+            {/* QFind Logo with scanner beam */}
+            <div className="search-anim-logo-wrap">
+              <img
+                src="/logo-white.png"
+                alt="Saving QFind"
+                className="search-anim-logo-img"
+              />
+              <div className="search-scanner-beam" />
+            </div>
+
+            {/* Animated details */}
+            <div className="search-anim-details">
+              <div className="search-anim-badge">
+                <span className="search-live-dot" />
+                {initialData ? "Updating Service" : "Publishing Service"}
+              </div>
+              <h3 className="search-anim-title">
+                {initialData
+                  ? "Saving your changes to QFind..."
+                  : "Publishing your service to QFind..."}
+              </h3>
+              <p className="search-anim-subtitle">
+                Syncing business profile, Google Maps location, and coverage status
+              </p>
+            </div>
+
+            {/* Progress bar */}
+            <div className="search-progress-bar-track">
+              <div className="search-progress-bar-fill" />
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="popup-header">
+              <h2>
+                {initialData ? "Edit Service" : "Add New Service"}
+              </h2>
+              <button className="close-btn" onClick={onClose}>
+                &times;
+              </button>
+            </div>
 
         <form onSubmit={handleSubmit} className="add-service-form">
           <div className="form-grid">
             <div className="form-group">
-              <label>Nombre del Negocio</label>
+              <label>Business Name</label>
               <input
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Ej: Restaurant El Paso"
+                placeholder="e.g. El Paso Restaurant"
                 required
               />
             </div>
@@ -330,7 +389,7 @@ export default function AddServicePopup({
             </div>
 
             <div className="filter-group">
-              <label>País</label>
+              <label>Country</label>
               <select
                 className="filter-select"
                 value={countryId}
@@ -340,7 +399,7 @@ export default function AddServicePopup({
                   setCityId("");
                 }}
               >
-                <option value="">Selecciona un país</option>
+                <option value="">Select a country</option>
                 {country.map((c) => (
                   <option key={c.id} value={c.id}>{c.label}</option>
                 ))}
@@ -348,7 +407,7 @@ export default function AddServicePopup({
             </div>
 
             <div className="filter-group">
-              <label>Provincia</label>
+              <label>State / Province</label>
               <select
                 className="filter-select"
                 value={stateId}
@@ -358,7 +417,7 @@ export default function AddServicePopup({
                 }}
                 disabled={!countryId}
               >
-                <option value="">Selecciona una provincia</option>
+                <option value="">Select a state / province</option>
                 {state.map((s) => (
                   <option key={s.id} value={s.id}>{s.label}</option>
                 ))}
@@ -366,14 +425,14 @@ export default function AddServicePopup({
             </div>
 
             <div className="filter-group">
-              <label>Ciudad</label>
+              <label>City</label>
               <select
                 className="filter-select"
                 value={cityId}
                 onChange={(event) => setCityId(event.target.value)}
                 disabled={!stateId}
               >
-                <option value="">Selecciona una ciudad</option>
+                <option value="">Select a city</option>
                 {city.map((c) => (
                   <option key={c.id} value={c.id}>{c.label}</option>
                 ))}
@@ -381,23 +440,23 @@ export default function AddServicePopup({
             </div>
 
             <div className="form-group full-width">
-              <label>¿Cómo aparece exactamente tu local en Google Maps?</label>
+              <label>Exact name as it appears on Google Maps</label>
               <input
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Ejemplo: Restaurant El Paso, Córdoba..."
+                placeholder="e.g. El Paso Restaurant, Main Street..."
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>Teléfono</label>
+              <label>Phone</label>
               <input
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Ej: +54 9 11..."
+                placeholder="e.g. +1 555 123 4567"
               />
             </div>
 
@@ -407,12 +466,12 @@ export default function AddServicePopup({
                 name="instagram"
                 value={formData.instagram}
                 onChange={handleChange}
-                placeholder="@tu_negocio"
+                placeholder="@your_business"
               />
             </div>
 
             <div className="form-group full-width">
-              <label>Imagen del Servicio</label>
+              <label>Service Image</label>
               <div className="image-upload-container">
                 <input
                   type="file"
@@ -452,7 +511,7 @@ export default function AddServicePopup({
                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
                         <polyline points="21 15 16 10 5 21"></polyline>
                       </svg>
-                      <span>Hacer clic para subir imagen</span>
+                      <span>Click to upload image</span>
                     </div>
                   )}
                 </div>
@@ -465,22 +524,69 @@ export default function AddServicePopup({
                       setFormData((prev) => ({ ...prev, image: "" }));
                     }}
                   >
-                    Eliminar Imagen
+                    Remove Image
                   </button>
                 )}
               </div>
             </div>
           </div>
 
+          {/* Admin exclusive options: Active & Paid */}
+          {isAdmin && (
+            <div className="popup-toggles-container">
+              <div className="popup-toggle-card">
+                <div className="toggle-info">
+                  <span className="toggle-title">
+                    <i className="fa-solid fa-eye" style={{ marginRight: '8px', color: active ? '#22c55e' : '#94a3b8' }}></i>
+                    Show service on the web (Active)
+                  </span>
+                  <span className="toggle-desc">
+                    {active ? "The service will be visible to users in searches" : "The service will be hidden from users"}
+                  </span>
+                </div>
+                <label className="switch-control" aria-label="Show service">
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={(e) => setActive(e.target.checked)}
+                  />
+                  <span className="switch-control-slider"></span>
+                </label>
+              </div>
+
+              <div className="popup-toggle-card">
+                <div className="toggle-info">
+                  <span className="toggle-title">
+                    <i className="fa-solid fa-credit-card" style={{ marginRight: '8px', color: paid ? '#2dd4bf' : '#94a3b8' }}></i>
+                    Payment status (Paid)
+                  </span>
+                  <span className="toggle-desc">
+                    {paid ? "Service enabled with confirmed payment" : "Service pending payment"}
+                  </span>
+                </div>
+                <label className="switch-control" aria-label="Payment status">
+                  <input
+                    type="checkbox"
+                    checked={paid}
+                    onChange={(e) => setPaid(e.target.checked)}
+                  />
+                  <span className="switch-control-slider"></span>
+                </label>
+              </div>
+            </div>
+          )}
+
           <div className="form-actions">
             <button type="button" className="cancel-btn" onClick={onClose}>
-              Cancelar
+              Cancel
             </button>
             <button type="submit" className="submit-btn text-white">
-              {initialData ? "Guardar Cambios" : "Crear Servicio"}
+              {initialData ? "Save Changes" : "Create Service"}
             </button>
           </div>
         </form>
+          </>
+        )}
       </div>
     </div>
   );

@@ -6,47 +6,92 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { userEmail, ...serviceData } = body;
 
-    if (!userEmail) {
-      return NextResponse.json(
-        {
-          error: "El correo del usuario es necesario para vincular el servicio",
-        },
-        { status: 400 },
-      );
-    }
+    const targetEmail =
+      userEmail ||
+      serviceData.email ||
+      `service-${Date.now()}@qfind.local`;
 
-    const user = await prisma.user.findUnique({
-      where: { email: userEmail },
+    let user = await prisma.user.findUnique({
+      where: { email: targetEmail },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Usuario no encontrado en la base de datos" },
-        { status: 404 },
-      );
+      user = await prisma.user.create({
+        data: {
+          email: targetEmail,
+          google_id: targetEmail,
+          nombre: serviceData.name || targetEmail.split("@")[0],
+          foto: serviceData.image || null,
+        },
+      });
+    } else {
+      const existingService = await prisma.service.findUnique({
+        where: { userId: user.id },
+      });
+      if (existingService) {
+        const rand = Math.random().toString(36).substring(2, 7);
+        const altEmail = `${targetEmail.split("@")[0]}+${rand}@qfind.local`;
+        user = await prisma.user.create({
+          data: {
+            email: altEmail,
+            google_id: altEmail,
+            nombre: serviceData.name || user.nombre,
+            foto: serviceData.image || user.foto,
+          },
+        });
+      }
     }
+
+    const isActive =
+      serviceData.active !== undefined ? Boolean(serviceData.active) : true;
+    const isValidated =
+      serviceData.validated !== undefined ? Boolean(serviceData.validated) : true;
+    const isPaid =
+      serviceData.paid !== undefined ? Boolean(serviceData.paid) : false;
 
     const service = await prisma.service.create({
       data: {
         name: serviceData.name,
-        label: serviceData.label,
-        description: serviceData.description,
-        phone: serviceData.phone,
-        instagram: serviceData.instagram,
-        email: serviceData.email,
-        image: serviceData.image,
+        label: serviceData.label || serviceData.name,
+        description: serviceData.description || "",
+        phone: serviceData.phone || "",
+        instagram: serviceData.instagram || "",
+        email: serviceData.email || targetEmail,
+        image: serviceData.image || "",
         userId: user.id,
-        categoryId: Number(serviceData.categoryId),
-        subcategoryId: Number(serviceData.subcategoryId),
+        categoryId: serviceData.categoryId ? Number(serviceData.categoryId) : null,
+        subcategoryId: serviceData.subcategoryId
+          ? Number(serviceData.subcategoryId)
+          : null,
         countryId: serviceData.countryId ? Number(serviceData.countryId) : null,
         stateId: serviceData.stateId ? Number(serviceData.stateId) : null,
         cityId: serviceData.cityId ? Number(serviceData.cityId) : null,
 
-        active: serviceData.active || false,
-        validated: serviceData.validated || false,
-        paid: serviceData.paid || false,
+        active: isActive,
+        validated: isValidated,
+        paid: isPaid,
       },
     });
+
+    if (isPaid) {
+      const planType = await prisma.planType.findFirst();
+      if (planType) {
+        const now = new Date();
+        const duration = planType.duration || 30;
+        const endDate = new Date(
+          now.getTime() + duration * 24 * 60 * 60 * 1000
+        );
+        await prisma.plan.create({
+          data: {
+            startDate: now,
+            endDate,
+            paymentStatus: true,
+            planTypeId: planType.id,
+            serviceId: service.id,
+          },
+        });
+      }
+    }
 
     return NextResponse.json(service);
   } catch (error) {
@@ -81,7 +126,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(user?.service || null);
     }
 
-    const services = await prisma.service.findMany();
+    const takeParam = searchParams.get("take") || searchParams.get("limit");
+    const take = takeParam ? Number(takeParam) : 500;
+
+    const services = await prisma.service.findMany({
+      take: take > 0 ? take : 500,
+      include: {
+        plans: {
+          include: { planType: true },
+          orderBy: { endDate: "desc" },
+        },
+      },
+      orderBy: { id: "desc" },
+    });
     return NextResponse.json(services);
   } catch (error) {
     console.error("Error obteniendo servicios:", error);
@@ -98,7 +155,7 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const { id, userEmail, ...updateData } = body;
 
-    let serviceId = id;
+    let serviceId = id ? Number(id) : null;
 
     if (!serviceId && userEmail) {
       const user = await prisma.user.findUnique({
@@ -118,8 +175,6 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // Construir el objeto de actualización dinámicamente para no sobreescribir
-    // campos que no vengan en el body (ej: categoryId, subcategoryId, stateId, etc.)
     const data: Record<string, unknown> = {};
 
     if (updateData.name !== undefined) data.name = updateData.name;
@@ -129,15 +184,14 @@ export async function PUT(req: NextRequest) {
     if (updateData.instagram !== undefined) data.instagram = updateData.instagram;
     if (updateData.email !== undefined) data.email = updateData.email;
     if (updateData.image !== undefined) data.image = updateData.image;
-    if (updateData.active !== undefined) data.active = updateData.active;
-    if (updateData.validated !== undefined) data.validated = updateData.validated;
-    if (updateData.paid !== undefined) data.paid = updateData.paid;
+    if (updateData.active !== undefined) data.active = Boolean(updateData.active);
+    if (updateData.validated !== undefined) data.validated = Boolean(updateData.validated);
+    if (updateData.paid !== undefined) data.paid = Boolean(updateData.paid);
 
-    // Estos campos solo se actualizan si vienen explícitamente en el body
     if (updateData.categoryId !== undefined)
-      data.categoryId = Number(updateData.categoryId);
+      data.categoryId = updateData.categoryId ? Number(updateData.categoryId) : null;
     if (updateData.subcategoryId !== undefined)
-      data.subcategoryId = Number(updateData.subcategoryId);
+      data.subcategoryId = updateData.subcategoryId ? Number(updateData.subcategoryId) : null;
     if (updateData.countryId !== undefined)
       data.countryId = updateData.countryId ? Number(updateData.countryId) : null;
     if (updateData.stateId !== undefined)
@@ -145,12 +199,102 @@ export async function PUT(req: NextRequest) {
     if (updateData.cityId !== undefined)
       data.cityId = updateData.cityId ? Number(updateData.cityId) : null;
 
-    const updatedService = await prisma.service.update({
+    if (updateData.planTypeId) {
+      data.paid = true;
+    }
+
+    await prisma.service.update({
       where: { id: serviceId },
       data,
     });
 
-    return NextResponse.json(updatedService);
+    if (updateData.planTypeId) {
+      const planTypeId = Number(updateData.planTypeId);
+      const planType = await prisma.planType.findUnique({
+        where: { id: planTypeId },
+      });
+      if (planType) {
+        const now = new Date();
+        const duration = planType.duration || 30;
+        const endDate = new Date(
+          now.getTime() + duration * 24 * 60 * 60 * 1000
+        );
+
+        await prisma.plan.deleteMany({
+          where: { serviceId },
+        });
+
+        await prisma.plan.create({
+          data: {
+            startDate: now,
+            endDate,
+            paymentStatus: true,
+            planTypeId: planType.id,
+            serviceId,
+          },
+        });
+      }
+    } else if (updateData.paid === true) {
+      const existingPlan = await prisma.plan.findFirst({
+        where: { serviceId },
+        orderBy: { endDate: "desc" },
+      });
+      if (!existingPlan) {
+        const planType = await prisma.planType.findFirst();
+        if (planType) {
+          const now = new Date();
+          const duration = planType.duration || 30;
+          const endDate = new Date(
+            now.getTime() + duration * 24 * 60 * 60 * 1000
+          );
+          await prisma.plan.create({
+            data: {
+              startDate: now,
+              endDate,
+              paymentStatus: true,
+              planTypeId: planType.id,
+              serviceId,
+            },
+          });
+        }
+      } else {
+        const isExpired = new Date(existingPlan.endDate).getTime() < Date.now();
+        const now = new Date();
+        const planType = await prisma.planType.findUnique({
+          where: { id: existingPlan.planTypeId },
+        });
+        const duration = planType?.duration || 30;
+        const endDate = isExpired
+          ? new Date(now.getTime() + duration * 24 * 60 * 60 * 1000)
+          : existingPlan.endDate;
+
+        await prisma.plan.update({
+          where: { id: existingPlan.id },
+          data: {
+            paymentStatus: true,
+            endDate,
+            startDate: isExpired ? now : existingPlan.startDate,
+          },
+        });
+      }
+    } else if (updateData.paid === false) {
+      await prisma.plan.updateMany({
+        where: { serviceId },
+        data: { paymentStatus: false },
+      });
+    }
+
+    const finalService = await prisma.service.findUnique({
+      where: { id: serviceId },
+      include: {
+        plans: {
+          include: { planType: true },
+          orderBy: { endDate: "desc" },
+        },
+      },
+    });
+
+    return NextResponse.json(finalService);
   } catch (error) {
     console.error("Error actualizando servicio:", error);
     return NextResponse.json(

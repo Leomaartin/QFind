@@ -2,7 +2,8 @@ import { businessSeeds } from "@/data/businesses";
 import { mvpCategories, mvpCities } from "@/data/mvpCatalog";
 
 export type ServiceCardItem = {
-  slug: number;
+  id?: number;
+  slug: string | number;
   name: string;
   address: string;
   phone: string;
@@ -21,6 +22,7 @@ export type ServiceCardItem = {
   subcategoryId?: string;
   active?: boolean;
   paid?: boolean;
+  plans?: any[];
 };
 
 export function getServices(): ServiceCardItem[] {
@@ -37,6 +39,7 @@ export function getServices(): ServiceCardItem[] {
       slug: business.slug,
       name: business.name,
       address: business.addressLine1,
+      phone: business.phone || business.whatsappNumber || "",
       contact: business.whatsappNumber ?? business.phone,
       instagram: business.instagramHandle
         ? `@${business.instagramHandle}`

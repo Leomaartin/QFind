@@ -15,22 +15,51 @@
   justify-content: space-between;
   gap: 18px;
   padding: 14px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 22px;
   background:
-    linear-gradient(180deg, rgba(29, 37, 38, 0.92), rgba(15, 15, 16, 0.82)),
-    rgba(15, 15, 16, 0.72);
+    linear-gradient(180deg, rgba(28, 43, 40, 0.92), rgba(18, 28, 26, 0.85)),
+    rgba(18, 28, 26, 0.8);
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 18px 40px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(18px);
+}
+
+.brandLink {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.brandLogoImg {
+  height: 44px;
+  width: auto;
+  max-width: 135px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), filter 0.28s ease;
+}
+
+.brandLink:hover .brandLogoImg {
+  transform: translateY(-1px) scale(1.04);
+  filter: drop-shadow(0 0 16px rgba(45, 212, 191, 0.6));
 }
 
 .brandMark {
@@ -45,8 +74,8 @@
   letter-spacing: 0.08em;
   background:
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), transparent 55%),
-    linear-gradient(135deg, #809ba6, #8c613b);
-  box-shadow: 0 12px 22px rgba(128, 155, 166, 0.22);
+    linear-gradient(135deg, #24544c, #1a3833);
+  box-shadow: 0 12px 22px rgba(45, 212, 191, 0.2);
 }
 
 .brandName {
@@ -59,35 +88,75 @@
 
 .brandTag {
   display: block;
-  color: #9fb0b7;
-  font-size: 0.78rem;
+  color: #8fa8a4;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   line-height: 1.1;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  padding-left: 12px;
 }
 
-.aura {
+.authContainer {
   display: flex;
   align-items: center;
-  gap: 14px;
-  min-width: 140px;
-  justify-content: flex-end;
-  flex-shrink: 0;
+  gap: 12px;
 }
 
-.auraDot {
-  width: 12px;
-  height: 12px;
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 4px 12px 4px 6px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #f2eee8, #8c613b);
-  box-shadow:
-    0 0 0 6px rgba(242, 238, 232, 0.06),
-    0 0 24px rgba(242, 238, 232, 0.22);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
-.auraLine {
-  width: 96px;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(242, 238, 232, 0.5), rgba(128, 155, 166, 0));
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
 }
+
+.userName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+}
+
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 2px;
+}
+
+.logoutBtn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.logoutText {
+  display: inline;
+}
+
+
 
 @media (max-width: 900px) {
   .shell {
@@ -125,6 +194,11 @@
     border-radius: 18px;
   }
 
+  .brandLogoImg {
+    height: 36px;
+    max-width: 110px;
+  }
+
   .brandMark {
     width: 40px;
     height: 40px;
@@ -140,27 +214,121 @@
     display: none;
   }
 
-  .aura {
-    min-width: auto;
-    gap: 8px;
+  .logoutText {
+    display: none;
   }
 
-  .auraDot {
-    width: 10px;
-    height: 10px;
-  }
-
-  .auraLine {
-    width: 44px;
+  .userName {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .nav {
     padding: 10px 12px;
   }
 
-  .auraLine {
-    width: 30px;
+  .userName {
+    display: none;
   }
+
+  .userInfo {
+    padding: 3px 6px;
+  }
+}
+
+/* Mobile Hamburger Button (3 lines) */
+.hamburgerBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  margin-left: 4px;
+}
+
+.hamburgerBtn:hover {
+  background: var(--accent, #14b8a6);
+  color: #ffffff;
+  border-color: var(--accent, #14b8a6);
+  transform: scale(1.05);
+}
+
+.hamburgerBtnGuest {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f1f5f9;
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.hamburgerBtnGuest:hover {
+  background: var(--accent, #14b8a6);
+  color: #ffffff;
+  border-color: var(--accent, #14b8a6);
+}
+
+@media (max-width: 768px) {
+  .logoutBtn {
+    display: none !important;
+  }
+
+  .hamburgerBtn {
+    display: inline-flex !important;
+  }
+
+  .hamburgerBtnGuest {
+    display: inline-flex !important;
+  }
+}
+
+/* Light Mode Overrides */
+:global(body.LigthVersion) .nav {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+:global(body.LigthVersion) .brandTag {
+  color: #576d69;
+  border-left-color: rgba(0, 0, 0, 0.14);
+}
+
+:global(body.LigthVersion) .userName {
+  color: #0f172a;
+}
+
+:global(body.LigthVersion) .userInfo {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+:global(body.LigthVersion) .hamburgerBtn,
+:global(body.LigthVersion) .hamburgerBtnGuest {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+}
+
+:global(body.LigthVersion) .hamburgerBtn:hover,
+:global(body.LigthVersion) .hamburgerBtnGuest:hover {
+  background: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488;
 }

@@ -1,5 +1,11 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import type { ServiceCardItem } from "@/lib/services/businesses";
+import Pagination from "@/components/Pagination";
 import "./viewServices.css";
+
+const ITEMS_PER_PAGE = 20;
 
 type CardsProps = {
   services: ServiceCardItem[];
@@ -19,7 +25,7 @@ function getCategoryInfo(service: ServiceCardItem) {
 
   return {
     type: "general",
-    label: service.label || "Servicio",
+    label: service.label || "Service",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -32,13 +38,38 @@ export default function ServicesCards({
   services,
   showTitle = false,
 }: CardsProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Reset to first page when services list changes (e.g. filters or search)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [services]);
+
+  const totalPages = Math.ceil(services.length / ITEMS_PER_PAGE);
+  const paginatedServices = services.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (sectionRef.current) {
+      const topOffset =
+        sectionRef.current.getBoundingClientRect().top + window.scrollY - 110;
+      window.scrollTo({ top: Math.max(0, topOffset), behavior: "smooth" });
+    }
+  };
+
   return (
-    <section className="services-section mb-5">
+    <section ref={sectionRef} className="services-section mb-5">
       {showTitle ? <h2 className="section-title mb-4">OUR SERVICES</h2> : null}
 
-      {services.length ? (
-        <div className="services-grid">
-          {services.map((service, index) => {
+      {paginatedServices.length ? (
+        <>
+          <div key={currentPage} className="page-transition-wrap">
+            <div className="services-grid">
+              {paginatedServices.map((service, index) => {
             const phoneDigits = getPhoneDigits(service.phone);
             const instagramHandle = getInstagramHandle(service.instagram);
             const categoryInfo = getCategoryInfo(service);
@@ -79,7 +110,7 @@ export default function ServicesCards({
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.address)}`}
                             rel="noreferrer"
                             target="_blank"
-                            title="Ver en Google Maps"
+                            title="View on Google Maps"
                           >
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M12 21C12 21 18 15.6 18 10.2C18 6.78 15.31 4 12 4C8.69 4 6 6.78 6 10.2C6 15.6 12 21 12 21Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -95,7 +126,7 @@ export default function ServicesCards({
                             href={`https://wa.me/${phoneDigits}`}
                             rel="noreferrer"
                             target="_blank"
-                            title="Contactar por WhatsApp"
+                            title="Contact on WhatsApp"
                           >
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M20 11.5C20 16.1944 16.1944 20 11.5 20C10.0278 20 8.64292 19.6254 7.43678 18.9681L4 20L5.07979 16.7206C4.3903 15.4784 4 14.0485 4 12.5278C4 7.83338 7.80558 4.0278 12.5 4.0278C17.1944 4.0278 21 7.83338 21 12.5278" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
@@ -111,7 +142,7 @@ export default function ServicesCards({
                             href={`https://instagram.com/${instagramHandle}`}
                             rel="noreferrer"
                             target="_blank"
-                            title="Visitar Instagram"
+                            title="Visit Instagram"
                           >
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <rect x="4.5" y="4.5" width="15" height="15" rx="4" stroke="currentColor" strokeWidth="1.8" />
@@ -127,7 +158,17 @@ export default function ServicesCards({
               </div>
             );
           })}
-        </div>
+            </div>
+          </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={services.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={handlePageChange}
+          />
+        </>
       ) : (
         <div className="services-empty-state">
           <h3>No services found for this combination</h3>

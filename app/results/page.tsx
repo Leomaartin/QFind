@@ -22,9 +22,9 @@ export default async function ResultsPage({
       <div
         className="card p-4"
         style={{
-          background: "#1D2526",
+          background: "#162422",
           borderRadius: "18px",
-          border: "1px solid rgba(255,255,255,0.08)",
+          border: "1px solid rgba(45, 212, 191, 0.15)",
         }}
       >
         <p>
