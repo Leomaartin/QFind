@@ -3927,6 +3927,39 @@ body.LigthVersion {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.map-city-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.map-city-hint:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.LigthVersion .map-city-hint {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+.LigthVersion .map-city-hint:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
 /* =====================================================
    INTERACTIVE LEAFLET SERVICES MAP
 ===================================================== */

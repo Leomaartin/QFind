@@ -157,15 +157,7 @@ export default function ViewServiceContent() {
     filters.subcategoryId
   );
 
-  const isFullyFiltered = Boolean(
-    filters.countryId &&
-    filters.stateId &&
-    filters.cityId &&
-    filters.categoryId &&
-    filters.subcategoryId
-  );
-
-  const shouldShowResults = isFullyFiltered || Boolean(filters.cityId || filters.categoryId || filters.subcategoryId);
+  const shouldShowResults = hasActiveFilters;
 
   const filteredServices = useMemo<ServiceCardItem[]>(() => {
     return allServices.filter((s) => {
@@ -922,7 +914,11 @@ export default function ViewServiceContent() {
               <h3 className="search-anim-title">
                 {filters.cityName
                   ? `Exploring services in ${filters.cityName}...`
-                  : "Scanning best services across the map..."}
+                  : filters.stateId
+                  ? "Exploring services across this province..."
+                  : filters.countryId
+                  ? "Exploring services across this country..."
+                  : "Scanning best services across the directory..."}
               </h3>
               <p className="search-anim-subtitle">
                 Pinpointing verified locations, business coverage, and active providers
@@ -962,27 +958,30 @@ export default function ViewServiceContent() {
                     {filteredServices.length} {filteredServices.length === 1 ? "result" : "results"}
                   </span>
 
-                  {/* View on Map Button: Enabled only when at least City filter is reached */}
-                  <button
-                    type="button"
-                    className={`btn-view-map ${viewMode === "map" ? "btn-view-map-active" : ""}`}
-                    onClick={() => {
-                      if (filters.cityId) {
-                        setViewMode(viewMode === "map" ? "cards" : "map");
-                      }
-                    }}
-                    disabled={!filters.cityId}
-                    title={
-                      filters.cityId
-                        ? viewMode === "map"
+                  {/* View on Map Button: Enabled ONLY when a specific City filter is selected to avoid map overload */}
+                  {filters.cityId ? (
+                    <button
+                      type="button"
+                      className={`btn-view-map ${viewMode === "map" ? "btn-view-map-active" : ""}`}
+                      onClick={() => setViewMode(viewMode === "map" ? "cards" : "map")}
+                      title={
+                        viewMode === "map"
                           ? "Switch to Cards View"
                           : "View all located service points on the interactive map"
-                        : "Select at least a City filter to activate Map View"
-                    }
-                  >
-                    <i className={`fa-solid ${viewMode === "map" ? "fa-border-all" : "fa-map-location-dot"} me-1`}></i>
-                    {viewMode === "map" ? "View Cards" : "View on Map"}
-                  </button>
+                      }
+                    >
+                      <i className={`fa-solid ${viewMode === "map" ? "fa-border-all" : "fa-map-location-dot"} me-1`}></i>
+                      {viewMode === "map" ? "View Cards" : "View on Map"}
+                    </button>
+                  ) : (
+                    <span
+                      className="map-city-hint"
+                      title="Select a specific City in filters to explore interactive map locations"
+                    >
+                      <i className="fa-solid fa-map-location-dot me-1"></i>
+                      Select City for Map
+                    </span>
+                  )}
                 </div>
               </div>
 
