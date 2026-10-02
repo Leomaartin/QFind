@@ -97,7 +97,7 @@ export default function Navbar() {
       new CustomEvent("user-auth-change", { detail: null })
     );
 
-    toast.success("Signed out successfully");
+    toast.success("Signed out successfully ok");
   };
 
   return (
