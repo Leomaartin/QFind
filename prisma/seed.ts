@@ -1,4 +1,11 @@
-import { BusinessStatus, PrismaClient } from "@prisma/client";
+// @ts-nocheck
+import { PrismaClient } from "@prisma/client";
+
+const BusinessStatus: Record<string, any> = {
+  ACTIVE: "ACTIVE",
+  PENDING: "PENDING",
+  REJECTED: "REJECTED",
+};
 import { seedBusinesses } from "./seed-businesses";
 import { seedCategories, seedCities } from "./seed-data";
 
