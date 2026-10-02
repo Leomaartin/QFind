@@ -12,6 +12,8 @@ import ServicesMap from "@/components/ServicesMap";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { type ServiceCardItem } from "@/lib/services/businesses";
+import { getApiUrl } from "@/lib/config";
+import { checkIsAdmin } from "@/components/AdminGuard";
 
 export default function ViewServiceContent() {
   const [allServices, setAllServices] = useState<ServiceCardItem[]>([]);
@@ -116,7 +118,7 @@ export default function ViewServiceContent() {
   useEffect(() => {
     const fetchAllServices = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services`);
+        const res = await fetch(getApiUrl("/api/services"));
         if (res.ok) {
           const data = await res.json();
           const mapped = data.map((s: any) => ({
@@ -237,7 +239,7 @@ export default function ViewServiceContent() {
 
   const handleSubmitGoogle = async (googleUser: any): Promise<string | number | null> => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
+      const response = await fetch(getApiUrl("/api/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -338,7 +340,7 @@ export default function ViewServiceContent() {
 
   const fetchUserService = async (email: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/services?email=${encodeURIComponent(email)}`);
+      const response = await fetch(getApiUrl(`/api/services?email=${encodeURIComponent(email)}`));
       if (response.ok) {
         const data = await response.json();
         setUserService(data);
@@ -456,10 +458,10 @@ export default function ViewServiceContent() {
                 Choose a plan
               </button>
             )}
-            {currentUser?.email === "[EMAIL_ADDRESS]" && (
+            {checkIsAdmin(currentUser?.email) && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <a
-                  href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/admin`}
+                  href="/admin"
                   className="add-service-trigger-btn"
                   style={{ textDecoration: 'none' }}
                 >
@@ -467,7 +469,7 @@ export default function ViewServiceContent() {
                 </a>
 
                 <a
-                  href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/crud`}
+                  href="/crud"
                   className="add-service-trigger-btn"
                   style={{ textDecoration: 'none' }}
                 >
@@ -708,13 +710,13 @@ export default function ViewServiceContent() {
                 </button>
 
                 {/* Admin options */}
-                {currentUser?.email === "leonelmartin9808@gmail.com" && (
+                {checkIsAdmin(currentUser?.email) && (
                   <div className="mobile-drawer-admin-group">
                     <div className="mobile-drawer-group-title admin-title">
                       <i className="fa-solid fa-crown me-1"></i> Admin Panel
                     </div>
                     <a
-                      href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/admin`}
+                      href="/admin"
                       className="mobile-drawer-action-btn mobile-btn-admin"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -726,7 +728,7 @@ export default function ViewServiceContent() {
                       <i className="fa-solid fa-chevron-right ms-auto"></i>
                     </a>
                     <a
-                      href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/crud`}
+                      href="/crud"
                       className="mobile-drawer-action-btn mobile-btn-admin"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >

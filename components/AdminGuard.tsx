@@ -5,7 +5,7 @@ import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
-import { BACKEND_URL } from "@/lib/config";
+import { getApiUrl } from "@/lib/config";
 import "./viewServices.css";
 
 const ADMIN_EMAILS = [
@@ -91,7 +91,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       };
 
       try {
-        const res = await fetch(`${BACKEND_URL}/api/login`, {
+        const res = await fetch(getApiUrl("/api/login"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

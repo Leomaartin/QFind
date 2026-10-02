@@ -6,7 +6,7 @@ import Cards from "@/components/EditCards";
 import Filters from "@/components/Filters";
 import Popup from "@/components/Popup";
 import { type ServiceCardItem } from "@/lib/services/businesses";
-import { BACKEND_URL } from "@/lib/config";
+import { getApiUrl } from "@/lib/config";
 
 export default function CrudServices() {
   const [allServices, setAllServices] = useState<ServiceCardItem[]>([]);
@@ -36,7 +36,7 @@ export default function CrudServices() {
 
   const fetchAllServices = async () => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/services`);
+      const res = await fetch(getApiUrl("/api/services"));
       if (res.ok) {
         const data = await res.json();
         const mapped = data.map((s: any) => ({
