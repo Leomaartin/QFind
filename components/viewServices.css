@@ -878,6 +878,10 @@ section {
 }
 
 @media (max-width: 768px) {
+  .banner-section {
+    background-position: 72% center;
+  }
+
   .banner-title {
     font-size: 2rem;
   }
@@ -2514,6 +2518,14 @@ body.LigthVersion {
 }
 
 @media (max-width: 768px) {
+  .LigthVersion .banner-section {
+    background-position: 72% center;
+  }
+
+  .LigthVersion .banner-title {
+    font-size: 2rem;
+  }
+
   .banner-title {
     font-size: 2rem;
   }
