@@ -13,9 +13,24 @@ const ADMIN_EMAILS = [
   process.env.NEXT_PUBLIC_ADMIN_EMAIL || "",
 ].filter(Boolean).map(e => e.toLowerCase().trim());
 
-export const checkIsAdmin = (email?: string | null): boolean => {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase().trim());
+export const checkIsAdmin = (userOrEmail?: any): boolean => {
+  if (!userOrEmail) return false;
+
+  // Si se pasa el objeto de usuario
+  if (typeof userOrEmail === "object") {
+    if (userOrEmail.admin === true) return true;
+    if (userOrEmail.email && ADMIN_EMAILS.includes(userOrEmail.email.toLowerCase().trim())) {
+      return true;
+    }
+    return false;
+  }
+
+  // Si se pasa el string del email directamente
+  if (typeof userOrEmail === "string") {
+    return ADMIN_EMAILS.includes(userOrEmail.toLowerCase().trim());
+  }
+
+  return false;
 };
 
 interface AdminGuardProps {
@@ -88,6 +103,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
         email: decoded.email,
         picture: decoded.picture,
         id: undefined as string | number | undefined,
+        admin: false as boolean,
       };
 
       try {
@@ -103,6 +119,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
         });
         const data = await res.json();
         if (data.user?.id) userData.id = data.user.id;
+        if (data.user?.admin !== undefined) userData.admin = data.user.admin;
       } catch (err) {
         console.error("Backend login error:", err);
       }
@@ -112,7 +129,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       window.dispatchEvent(new CustomEvent("user-auth-change", { detail: userData }));
       setIsAuthModalOpen(false);
 
-      if (checkIsAdmin(userData.email)) {
+      if (checkIsAdmin(userData)) {
         toast.success(`Welcome Admin, ${userData.name}!`);
       } else {
         toast.error("This account is not authorized as an administrator.");
@@ -139,7 +156,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     );
   }
 
-  const isAdmin = checkIsAdmin(currentUser?.email);
+  const isAdmin = checkIsAdmin(currentUser);
 
   if (!isAdmin) {
     return (

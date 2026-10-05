@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import toast, { Toaster } from "react-hot-toast";
 import { jwtDecode } from "jwt-decode";
+import { getApiUrl } from "@/lib/config";
 import "./Login.css";
 
 interface GoogleUser {
@@ -11,6 +12,7 @@ interface GoogleUser {
   name: string;
   email: string;
   picture: string;
+  admin?: boolean;
 }
 
 interface LoginProps {
@@ -19,9 +21,9 @@ interface LoginProps {
 
 const handleSubmitGoogle = async (
   googleUser: GoogleUser
-): Promise<string | number | null> => {
+): Promise<{ id?: string | number; admin?: boolean } | null> => {
   try {
-    const response = await fetch("/api/login", {
+    const response = await fetch(getApiUrl("/api/login"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +37,10 @@ const handleSubmitGoogle = async (
     });
 
     const data = await response.json();
-    return data.user?.id || null;
+    return {
+      id: data.user?.id,
+      admin: data.user?.admin ?? false,
+    };
   } catch (error) {
     console.error(error);
     return null;
@@ -84,12 +89,14 @@ export default function Login({ onUserChange }: LoginProps) {
         name: decoded.name,
         email: decoded.email,
         picture: decoded.picture,
+        admin: false,
       };
 
-      const id = await handleSubmitGoogle(userData);
+      const serverData = await handleSubmitGoogle(userData);
 
-      if (id) {
-        userData.id = id;
+      if (serverData) {
+        if (serverData.id) userData.id = serverData.id;
+        userData.admin = serverData.admin ?? false;
       }
 
       localStorage.setItem("user", JSON.stringify(userData));

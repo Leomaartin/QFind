@@ -229,7 +229,9 @@ export default function ViewServiceContent() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userService, setUserService] = useState<any>(null);
 
-  const handleSubmitGoogle = async (googleUser: any): Promise<string | number | null> => {
+  const handleSubmitGoogle = async (
+    googleUser: any
+  ): Promise<{ id?: string | number; admin?: boolean } | null> => {
     try {
       const response = await fetch(getApiUrl("/api/login"), {
         method: "POST",
@@ -245,7 +247,10 @@ export default function ViewServiceContent() {
       });
 
       const data = await response.json();
-      return data.user?.id || null;
+      return {
+        id: data.user?.id,
+        admin: data.user?.admin ?? false,
+      };
     } catch (error) {
       console.error("Backend login error:", error);
       return null;
@@ -263,11 +268,13 @@ export default function ViewServiceContent() {
         email: decoded.email,
         picture: decoded.picture,
         id: undefined as string | number | undefined,
+        admin: false as boolean,
       };
 
-      const id = await handleSubmitGoogle(userData);
-      if (id) {
-        userData.id = id;
+      const serverData = await handleSubmitGoogle(userData);
+      if (serverData) {
+        if (serverData.id) userData.id = serverData.id;
+        userData.admin = serverData.admin ?? false;
       }
 
       localStorage.setItem("user", JSON.stringify(userData));
@@ -450,7 +457,7 @@ export default function ViewServiceContent() {
                 Choose a plan
               </button>
             )}
-            {checkIsAdmin(currentUser?.email) && (
+            {checkIsAdmin(currentUser) && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <a
                   href="/admin"
@@ -702,7 +709,7 @@ export default function ViewServiceContent() {
                 </button>
 
                 {/* Admin options */}
-                {checkIsAdmin(currentUser?.email) && (
+                {checkIsAdmin(currentUser) && (
                   <div className="mobile-drawer-admin-group">
                     <div className="mobile-drawer-group-title admin-title">
                       <i className="fa-solid fa-crown me-1"></i> Admin Panel
