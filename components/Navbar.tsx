@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -30,13 +30,30 @@ export default function Navbar() {
       }
     };
 
-    loadSavedUser();
+    const syncWithServer = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            return;
+          }
+        }
+      } catch {
+        // Fallback al localStorage
+      }
+      loadSavedUser();
+    };
+
+    syncWithServer();
 
     const handleAuthChange = (event: any) => {
       if (event.detail !== undefined) {
         setUser(event.detail);
       } else {
-        loadSavedUser();
+        syncWithServer();
       }
     };
 
@@ -89,7 +106,12 @@ export default function Navbar() {
     );
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
     localStorage.removeItem("user");
     setUser(null);
 
@@ -97,7 +119,7 @@ export default function Navbar() {
       new CustomEvent("user-auth-change", { detail: null })
     );
 
-    toast.success("Signed out successfully ok");
+    toast.success("Signed out successfully");
   };
 
   return (

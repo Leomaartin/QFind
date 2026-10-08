@@ -1,10 +1,42 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
+import { getSessionUser } from "@/lib/auth";
+
+const ServiceInputSchema = z.object({
+  id: z.union([z.number(), z.string()]).optional(),
+  userEmail: z.string().email().optional(),
+  name: z.string().min(1).max(200).optional(),
+  label: z.string().max(200).optional(),
+  description: z.string().max(4000).optional(),
+  phone: z.string().max(50).optional(),
+  instagram: z.string().max(100).optional(),
+  email: z.string().email().or(z.literal("")).optional(),
+  image: z.string().optional(),
+  active: z.boolean().optional(),
+  validated: z.boolean().optional(),
+  paid: z.boolean().optional(),
+  categoryId: z.union([z.number(), z.string()]).nullable().optional(),
+  subcategoryId: z.union([z.number(), z.string()]).nullable().optional(),
+  countryId: z.union([z.number(), z.string()]).nullable().optional(),
+  stateId: z.union([z.number(), z.string()]).nullable().optional(),
+  cityId: z.union([z.number(), z.string()]).nullable().optional(),
+  planTypeId: z.union([z.number(), z.string()]).optional(),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { userEmail, ...serviceData } = body;
+    const rawBody = await req.json();
+    const parseResult = ServiceInputSchema.safeParse(rawBody);
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Datos de entrada invlidos", details: parseResult.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { userEmail, ...serviceData } = parseResult.data;
 
     const targetEmail =
       userEmail ||
@@ -43,16 +75,16 @@ export async function POST(req: NextRequest) {
     }
 
     const isActive =
-      serviceData.active !== undefined ? Boolean(serviceData.active) : true;
+      serviceData.active !== undefined ? Boolean(serviceData.active) : false;
     const isValidated =
-      serviceData.validated !== undefined ? Boolean(serviceData.validated) : true;
+      serviceData.validated !== undefined ? Boolean(serviceData.validated) : false;
     const isPaid =
       serviceData.paid !== undefined ? Boolean(serviceData.paid) : false;
 
     const service = await prisma.service.create({
       data: {
-        name: serviceData.name,
-        label: serviceData.label || serviceData.name,
+        name: serviceData.name || "Servicio sin nombre",
+        label: serviceData.label || serviceData.name || "Servicio",
         description: serviceData.description || "",
         phone: serviceData.phone || "",
         instagram: serviceData.instagram || "",
@@ -98,7 +130,7 @@ export async function POST(req: NextRequest) {
     console.error("Error creando servicio:", error);
     return NextResponse.json(
       { error: "Error al crear servicio" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -111,16 +143,16 @@ export async function GET(req: NextRequest) {
 
     if (email) {
       const user = await prisma.user.findUnique({
-        where: { email: email },
-        include: { 
+        where: { email: email.toLowerCase().trim() },
+        include: {
           service: {
             include: {
               plans: {
                 include: { planType: true },
-                orderBy: { endDate: 'desc' }
-              }
-            }
-          } 
+                orderBy: { endDate: "desc" },
+              },
+            },
+          },
         },
       });
       return NextResponse.json(user?.service || null);
@@ -144,7 +176,7 @@ export async function GET(req: NextRequest) {
     console.error("Error obteniendo servicios:", error);
     return NextResponse.json(
       { error: "Error al obtener servicios" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -152,14 +184,23 @@ export async function GET(req: NextRequest) {
 // ACTUALIZAR (PUT)
 export async function PUT(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { id, userEmail, ...updateData } = body;
+    const rawBody = await req.json();
+    const parseResult = ServiceInputSchema.safeParse(rawBody);
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Datos de actualizacin invlidos", details: parseResult.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { id, userEmail, ...updateData } = parseResult.data;
 
     let serviceId = id ? Number(id) : null;
 
     if (!serviceId && userEmail) {
       const user = await prisma.user.findUnique({
-        where: { email: userEmail },
+        where: { email: userEmail.toLowerCase().trim() },
         include: { service: true },
       });
       serviceId = user?.service?.id;
@@ -169,10 +210,48 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Se requiere un ID de servicio o correo de usuario válido para actualizar",
+            "Se requiere un ID de servicio o correo de usuario vlido para actualizar",
         },
-        { status: 400 },
+        { status: 400 }
       );
+    }
+
+    const sessionUser = await getSessionUser();
+    const existingService = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
+
+    if (!existingService) {
+      return NextResponse.json(
+        { error: "Servicio no encontrado" },
+        { status: 404 }
+      );
+    }
+
+    // Si se intenta modificar permisos sensibles (active o paid), requerir permisos de admin
+    const isModifyingStatus =
+      updateData.active !== undefined ||
+      updateData.paid !== undefined ||
+      updateData.validated !== undefined;
+
+    if (isModifyingStatus) {
+      if (!sessionUser || !sessionUser.admin) {
+        return NextResponse.json(
+          { error: "Se requieren privilegios de administrador para aprobar o modificar estado de pago" },
+          { status: 403 }
+        );
+      }
+    } else {
+      // Si est modificando informacin general, debe ser admin o el dueo
+      if (sessionUser) {
+        const isOwner = existingService.userId === sessionUser.id;
+        if (!sessionUser.admin && !isOwner) {
+          return NextResponse.json(
+            { error: "No tienes permiso para modificar este servicio" },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     const data: Record<string, unknown> = {};
@@ -299,7 +378,7 @@ export async function PUT(req: NextRequest) {
     console.error("Error actualizando servicio:", error);
     return NextResponse.json(
       { error: "Error al actualizar servicio" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

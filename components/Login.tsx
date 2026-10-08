@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
@@ -20,7 +20,8 @@ interface LoginProps {
 }
 
 const handleSubmitGoogle = async (
-  googleUser: GoogleUser
+  googleUser: GoogleUser,
+  credential?: string
 ): Promise<{ id?: string | number; admin?: boolean } | null> => {
   try {
     const response = await fetch(getApiUrl("/api/login"), {
@@ -29,6 +30,7 @@ const handleSubmitGoogle = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        credential,
         google_id: googleUser.email,
         nombre: googleUser.name,
         email: googleUser.email,
@@ -52,15 +54,37 @@ export default function Login({ onUserChange }: LoginProps) {
   const [isLight, setIsLight] = useState(false);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
+    // Sincronizar usuario con el servidor
+    const syncUser = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            setUser(data.user);
+            onUserChange?.(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Error syncing user:", err);
+      }
 
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+          onUserChange?.(parsedUser);
+        } catch {
+          setUser(null);
+        }
+      }
+    };
 
-      setUser(parsedUser);
-      onUserChange?.(parsedUser);
-    }
-  }, []);
+    syncUser();
+  }, [onUserChange]);
 
   useEffect(() => {
     const updateTheme = () => {
@@ -92,7 +116,7 @@ export default function Login({ onUserChange }: LoginProps) {
         admin: false,
       };
 
-      const serverData = await handleSubmitGoogle(userData);
+      const serverData = await handleSubmitGoogle(userData, response.credential);
 
       if (serverData) {
         if (serverData.id) userData.id = serverData.id;
@@ -100,10 +124,9 @@ export default function Login({ onUserChange }: LoginProps) {
       }
 
       localStorage.setItem("user", JSON.stringify(userData));
-
       setUser(userData);
-
       onUserChange?.(userData);
+      window.dispatchEvent(new CustomEvent("user-auth-change", { detail: userData }));
 
       toast.success(`Welcome, ${userData.name}!`);
     } catch (error) {
@@ -112,10 +135,16 @@ export default function Login({ onUserChange }: LoginProps) {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
     localStorage.removeItem("user");
     setUser(null);
     onUserChange?.(null);
+    window.dispatchEvent(new CustomEvent("user-auth-change", { detail: null }));
     toast.success("Signed out successfully");
   };
 

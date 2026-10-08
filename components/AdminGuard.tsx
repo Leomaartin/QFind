@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
@@ -11,12 +11,13 @@ import "./viewServices.css";
 const ADMIN_EMAILS = [
   "leonelmartin9808@gmail.com",
   process.env.NEXT_PUBLIC_ADMIN_EMAIL || "",
-].filter(Boolean).map(e => e.toLowerCase().trim());
+]
+  .filter(Boolean)
+  .map((e) => e.toLowerCase().trim());
 
 export const checkIsAdmin = (userOrEmail?: any): boolean => {
   if (!userOrEmail) return false;
 
-  // Si se pasa el objeto de usuario
   if (typeof userOrEmail === "object") {
     if (userOrEmail.admin === true) return true;
     if (userOrEmail.email && ADMIN_EMAILS.includes(userOrEmail.email.toLowerCase().trim())) {
@@ -25,7 +26,6 @@ export const checkIsAdmin = (userOrEmail?: any): boolean => {
     return false;
   }
 
-  // Si se pasa el string del email directamente
   if (typeof userOrEmail === "string") {
     return ADMIN_EMAILS.includes(userOrEmail.toLowerCase().trim());
   }
@@ -40,6 +40,7 @@ interface AdminGuardProps {
 export default function AdminGuard({ children }: AdminGuardProps) {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [isServerAdmin, setIsServerAdmin] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
 
@@ -57,42 +58,60 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     return () => window.removeEventListener("theme-change", handleThemeChange);
   }, []);
 
-  // Sync user from localStorage & events
-  useEffect(() => {
-    const loadUser = () => {
-      try {
-        const saved = localStorage.getItem("user");
-        if (saved) {
+  // Verificacin de seguridad contra el SERVIDOR (No vulnerable a manipulacin de localStorage)
+  const verifyServerSession = useCallback(async () => {
+    try {
+      setIsChecking(true);
+      const res = await fetch("/api/auth/me", {
+        headers: { "Cache-Control": "no-cache" },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          const isAdm = Boolean(data.user.admin || checkIsAdmin(data.user));
+          setCurrentUser(data.user);
+          setIsServerAdmin(isAdm);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          return;
+        }
+      }
+
+      // Si el servidor indica que no hay sesin o no es admin
+      setIsServerAdmin(false);
+      const saved = localStorage.getItem("user");
+      if (saved) {
+        try {
           const parsed = JSON.parse(saved);
           setCurrentUser(parsed);
-        } else {
+        } catch {
           setCurrentUser(null);
         }
-      } catch {
-        setCurrentUser(null);
-      } finally {
-        setIsChecking(false);
-      }
-    };
-
-    loadUser();
-
-    const handleAuth = (e: any) => {
-      if (e.detail !== undefined) {
-        setCurrentUser(e.detail);
-        setIsChecking(false);
       } else {
-        loadUser();
+        setCurrentUser(null);
       }
+    } catch (err) {
+      console.error("Error verificando sesin en el servidor:", err);
+      setIsServerAdmin(false);
+    } finally {
+      setIsChecking(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    verifyServerSession();
+
+    const handleAuthChange = () => {
+      verifyServerSession();
     };
 
-    window.addEventListener("user-auth-change", handleAuth);
-    window.addEventListener("storage", loadUser);
+    window.addEventListener("user-auth-change", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
     return () => {
-      window.removeEventListener("user-auth-change", handleAuth);
-      window.removeEventListener("storage", loadUser);
+      window.removeEventListener("user-auth-change", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
     };
-  }, []);
+  }, [verifyServerSession]);
 
   const handleGoogleSuccess = async (response: any) => {
     try {
@@ -111,6 +130,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            credential: response.credential,
             google_id: userData.email,
             nombre: userData.name,
             email: userData.email,
@@ -129,6 +149,9 @@ export default function AdminGuard({ children }: AdminGuardProps) {
       window.dispatchEvent(new CustomEvent("user-auth-change", { detail: userData }));
       setIsAuthModalOpen(false);
 
+      // Re-verificar contra el servidor
+      await verifyServerSession();
+
       if (checkIsAdmin(userData)) {
         toast.success(`Welcome Admin, ${userData.name}!`);
       } else {
@@ -140,9 +163,15 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Error signing out:", err);
+    }
     localStorage.removeItem("user");
     setCurrentUser(null);
+    setIsServerAdmin(false);
     window.dispatchEvent(new CustomEvent("user-auth-change", { detail: null }));
     toast.success("Signed out");
   };
@@ -151,12 +180,13 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     return (
       <div className="admin-guard-loading-screen">
         <div className="admin-guard-spinner" />
-        <p>Verifying administrator credentials...</p>
+        <p>Verifying administrator credentials on server...</p>
       </div>
     );
   }
 
-  const isAdmin = checkIsAdmin(currentUser);
+  // La autorizacin requiere que tanto el servidor como el email sean vlidos
+  const isAdmin = isServerAdmin && checkIsAdmin(currentUser);
 
   if (!isAdmin) {
     return (
